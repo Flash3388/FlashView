@@ -3,17 +3,14 @@ package com.flash3388.flashview.gui.blocks;
 import com.flash3388.flashview.actions.ActionParameter;
 import com.flash3388.flashview.actions.ActionType;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 
 import java.util.List;
 
-public class ActionBlock extends DragNode {
+public class ActionBlock extends DraggableBlock {
 
     private final ActionType mActionType;
 
-    public ActionBlock(Pane parent, ActionType actionType) {
-        super(parent);
-
+    public ActionBlock(ActionType actionType) {
         mActionType = actionType;
 
         initView();
@@ -27,7 +24,7 @@ public class ActionBlock extends DragNode {
         imageView.setFitHeight(150);
         imageView.setImage(mActionType.getIcon());
 
-        getChildren().add(imageView);
+        addData(imageView);
     }
 
     public ActionType getActionType() {
