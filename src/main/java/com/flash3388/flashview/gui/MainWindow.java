@@ -1,6 +1,9 @@
 package com.flash3388.flashview.gui;
 
 import com.flash3388.flashview.actions.ActionType;
+import com.flash3388.flashview.gui.icons.ActionIcon;
+import com.flash3388.flashview.gui.drag.IconDragContainer;
+import com.flash3388.flashview.gui.icons.DragIcon;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -99,15 +102,16 @@ public class MainWindow {
 
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
-            DragContainer dragContainer = new DragContainer(dragIcon.getActionType().getName());
+            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getActionType().getName());
 
             ClipboardContent content = new ClipboardContent();
-            content.put(DragContainer.AddNode, dragContainer);
+            content.put(IconDragContainer.AddNode, iconDragContainer);
 
             Dragboard dragboard = mDragItem.startDragAndDrop(TransferMode.ANY);
             dragboard.setContent(content);
-            dragboard.setDragView(dragIcon.getActionType().getIcon());
 
+            mDragItem.setImage(dragIcon.getActionType().getIcon());
+            mDragItem.toFront();
             mDragItem.setVisible(true);
             mDragItem.setMouseTransparent(true);
 
@@ -135,12 +139,12 @@ public class MainWindow {
         };
 
         mIconDragDropped = (e) -> {
-            DragContainer dragContainer = (DragContainer) e.getDragboard().getContent(DragContainer.AddNode);
+            IconDragContainer iconDragContainer = (IconDragContainer) e.getDragboard().getContent(IconDragContainer.AddNode);
 
-            dragContainer.setDropCoordinates(new Point2D(e.getSceneX(), e.getSceneY()));
+            iconDragContainer.setDropCoordinates(new Point2D(e.getSceneX(), e.getSceneY()));
 
             ClipboardContent content = new ClipboardContent();
-            content.put(DragContainer.AddNode, dragContainer);
+            content.put(IconDragContainer.AddNode, iconDragContainer);
 
             e.getDragboard().setContent(content);
             e.setDropCompleted(true);
@@ -153,12 +157,12 @@ public class MainWindow {
 
             mDragItem.setVisible(false);
 
-            DragContainer dragContainer = (DragContainer) e.getDragboard().getContent(DragContainer.AddNode);
-            if (dragContainer != null) {
-                Point2D point = dragContainer.getDropCoordinates();
+            IconDragContainer iconDragContainer = (IconDragContainer) e.getDragboard().getContent(IconDragContainer.AddNode);
+            if (iconDragContainer != null) {
+                Point2D point = iconDragContainer.getDropCoordinates();
 
                 List<ActionType> actionTypes = mActionTypes.stream()
-                        .filter((a) -> a.getName().equals(dragContainer.getName()))
+                        .filter((a) -> a.getName().equals(iconDragContainer.getName()))
                         .collect(Collectors.toList());
 
                 ActionIcon actionIcon = new ActionIcon(actionTypes.get(0));

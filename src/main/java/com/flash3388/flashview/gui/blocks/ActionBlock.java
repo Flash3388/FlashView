@@ -1,4 +1,4 @@
-package com.flash3388.flashview.gui;
+package com.flash3388.flashview.gui.blocks;
 
 import com.flash3388.flashview.actions.ActionParameter;
 import com.flash3388.flashview.actions.ActionType;

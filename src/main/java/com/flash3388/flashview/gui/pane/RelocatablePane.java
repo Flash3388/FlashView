@@ -1,9 +1,9 @@
-package com.flash3388.flashview.gui;
+package com.flash3388.flashview.gui.pane;
 
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
 
-public class DragIcon extends AnchorPane {
+public class RelocatablePane extends AnchorPane {
 
     public void relocateToPoint(Point2D p) {
         Point2D localCoords = getParent().sceneToLocal(p);

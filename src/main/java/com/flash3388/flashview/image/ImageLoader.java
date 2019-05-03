@@ -1,4 +1,4 @@
-package com.flash3388.flashview.gui;
+package com.flash3388.flashview.image;
 
 import javafx.scene.image.Image;
 

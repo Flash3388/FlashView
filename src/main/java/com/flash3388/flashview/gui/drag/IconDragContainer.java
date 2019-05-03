@@ -1,19 +1,16 @@
-package com.flash3388.flashview.gui;
+package com.flash3388.flashview.gui.drag;
 
 import javafx.geometry.Point2D;
 import javafx.scene.input.DataFormat;
 
 import java.io.Serializable;
 
-public class DragContainer implements Serializable {
-
-    public static final DataFormat AddNode =
-            new DataFormat("application.DragIcon.add");
+public class IconDragContainer implements Serializable {
 
     private final String mName;
     private Point2D mDropCoordinates;
 
-    public DragContainer(String name) {
+    public IconDragContainer(String name) {
         mName = name;
     }
 

@@ -2,7 +2,7 @@ package com.flash3388.flashview.actions;
 
 import com.flash3388.flashview.actions.types.MoveDistanceAction;
 import com.flash3388.flashview.actions.types.RotateDegreesAction;
-import com.flash3388.flashview.gui.ImageLoader;
+import com.flash3388.flashview.image.ImageLoader;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

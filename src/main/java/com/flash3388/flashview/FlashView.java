@@ -3,7 +3,7 @@ package com.flash3388.flashview;
 import com.flash3388.flashview.actions.ActionTypeFactory;
 import com.flash3388.flashview.actions.ActionTypeInitializationException;
 import com.flash3388.flashview.gui.FlashViewGui;
-import com.flash3388.flashview.gui.ImageLoader;
+import com.flash3388.flashview.image.ImageLoader;
 import com.flash3388.flashview.gui.MainWindow;
 import com.flash3388.flashview.gui.WindowCloseRequest;
 import javafx.application.Platform;
