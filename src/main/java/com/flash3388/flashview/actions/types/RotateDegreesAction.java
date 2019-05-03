@@ -3,7 +3,7 @@ package com.flash3388.flashview.actions.types;
 import com.flash3388.flashview.actions.ActionParameter;
 import com.flash3388.flashview.actions.ActionType;
 import com.flash3388.flashview.actions.parameters.DegreesParameter;
-import com.flash3388.flashview.gui.ActionDisplayCell;
+import com.flash3388.flashview.gui.ActionBlock;
 import com.flash3388.flashview.gui.ActionSelectionCell;
 import javafx.scene.image.Image;
 
@@ -39,7 +39,7 @@ public class RotateDegreesAction implements ActionType {
     }
 
     @Override
-    public ActionDisplayCell getDisplayCell() {
+    public ActionBlock getDisplayCell() {
         return null;
     }
 }

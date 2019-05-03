@@ -3,7 +3,7 @@ package com.flash3388.flashview.actions.types;
 import com.flash3388.flashview.actions.ActionParameter;
 import com.flash3388.flashview.actions.ActionType;
 import com.flash3388.flashview.actions.parameters.DistanceParameter;
-import com.flash3388.flashview.gui.ActionDisplayCell;
+import com.flash3388.flashview.gui.ActionBlock;
 import com.flash3388.flashview.gui.ActionSelectionCell;
 import com.flash3388.flashview.gui.ImageLoader;
 import javafx.scene.image.Image;
@@ -42,7 +42,7 @@ public class MoveDistanceAction implements ActionType {
     }
 
     @Override
-    public ActionDisplayCell getDisplayCell() {
-        return new ActionDisplayCell(getName(), this);
+    public ActionBlock getDisplayCell() {
+        return null;
     }
 }

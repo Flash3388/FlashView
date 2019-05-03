@@ -1,19 +1,23 @@
 package com.flash3388.flashview.gui;
 
 import com.flash3388.flashview.actions.ActionType;
-import javafx.collections.FXCollections;
-import javafx.scene.Node;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Control;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SplitPane;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MainWindow {
 
@@ -21,57 +25,149 @@ public class MainWindow {
     private final double mHeight;
     private final List<ActionType> mActionTypes;
 
+    private final AnchorPane mRoot;
+    private final SplitPane mBasePane;
+    private Pane mCanvasPane;
+    private Control mSelectionPane;
+    private DragIcon mDragItem;
+
+    private EventHandler<DragEvent> mIconDragOverRoot = null;
+    private EventHandler<DragEvent> mIconDragDropped = null;
+    private EventHandler<DragEvent> mIconDragOverRightPane = null;
+
     public MainWindow(double width, double height, List<ActionType> actionTypes) {
         mWidth = width;
         mHeight = height;
         mActionTypes = actionTypes;
+
+        mRoot = new AnchorPane();
+        mBasePane = new SplitPane();
     }
 
     public Scene createScene() {
-        AnchorPane absoluteRoot = new AnchorPane();
+        mBasePane.setDividerPositions(0.2);
+        mBasePane.setPrefSize(mWidth, mHeight);
 
-        BorderPane root = new BorderPane();
+        createLayoutDragHandlers();
 
-        root.setCenter(createCanvas());
-        root.setLeft(createToolBox(absoluteRoot));
+        mDragItem = new DragIcon();
+        mDragItem.setVisible(false);
+        mDragItem.setOpacity(0.65);
+        mRoot.getChildren().add(mDragItem);
 
-        absoluteRoot.getChildren().add(root);
-        return new Scene(absoluteRoot, mWidth, mHeight);
+        mCanvasPane = createCanvas();
+        mSelectionPane = createToolBox();
+
+        mBasePane.getItems().addAll(mSelectionPane, mCanvasPane);
+
+        mRoot.getChildren().add(mBasePane);
+
+        return new Scene(mRoot, mWidth, mHeight);
     }
 
-    private Node createCanvas() {
-        Canvas canvas = new Canvas();
+    private Pane createCanvas() {
+        AnchorPane anchorPane = new AnchorPane();
 
-        return canvas;
+        return anchorPane;
     }
 
-    private Node createToolBox(AnchorPane root) {
-        ListView<ActionType> itemsList = new ListView<>();
-        itemsList.setItems(FXCollections.observableList(mActionTypes));
-        itemsList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        itemsList.setPrefWidth(200);
+    private Control createToolBox() {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setFitToHeight(true);
+        scrollPane.setPrefWidth(100);
+        scrollPane.setPadding(new Insets(6.0, 0.0, 0.0, 8.0));
 
-        itemsList.setCellFactory(param -> new ListCell<ActionType>() {
-            @Override
-            protected void updateItem(ActionType item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    setText(item.getName());
+        VBox content = new VBox();
+        content.setSpacing(10.0);
+        scrollPane.setContent(content);
 
-                    ImageView imageView = new ImageView();
-                    imageView.setFitHeight(60);
-                    imageView.setFitWidth(60);
-                    imageView.setImage(item.getIcon());
-                    setGraphic(imageView);
-                }
-            }
+        for (ActionType actionType : mActionTypes) {
+            ActionIcon actionIcon = new ActionIcon(actionType);
+            addDragDetection(actionIcon);
+
+            content.getChildren().add(actionIcon);
+        }
+
+        return scrollPane;
+    }
+
+    private void addDragDetection(ActionIcon dragIcon) {
+        dragIcon.setOnDragDetected((e) -> {
+            mBasePane.setOnDragOver(mIconDragOverRoot);
+            mCanvasPane.setOnDragOver(mIconDragOverRightPane);
+            mCanvasPane.setOnDragDropped(mIconDragDropped);
+
+            mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
+
+            DragContainer dragContainer = new DragContainer(dragIcon.getActionType().getName());
+
+            ClipboardContent content = new ClipboardContent();
+            content.put(DragContainer.AddNode, dragContainer);
+
+            Dragboard dragboard = mDragItem.startDragAndDrop(TransferMode.ANY);
+            dragboard.setContent(content);
+            dragboard.setDragView(dragIcon.getActionType().getIcon());
+
+            mDragItem.setVisible(true);
+            mDragItem.setMouseTransparent(true);
+
+            e.consume();
         });
+    }
 
-        VBox vBox = new VBox();
-        vBox.getChildren().add(itemsList);
-        return vBox;
+    private void createLayoutDragHandlers() {
+        mIconDragOverRoot = (e) -> {
+            Point2D point = mCanvasPane.sceneToLocal(e.getSceneX(), e.getSceneY());
+
+            if (!mCanvasPane.boundsInLocalProperty().get().contains(point)) {
+                e.acceptTransferModes(TransferMode.ANY);
+                mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
+            }
+
+            e.consume();
+        };
+
+        mIconDragOverRightPane = (e) -> {
+            e.acceptTransferModes(TransferMode.ANY);
+            mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
+
+            e.consume();
+        };
+
+        mIconDragDropped = (e) -> {
+            DragContainer dragContainer = (DragContainer) e.getDragboard().getContent(DragContainer.AddNode);
+
+            dragContainer.setDropCoordinates(new Point2D(e.getSceneX(), e.getSceneY()));
+
+            ClipboardContent content = new ClipboardContent();
+            content.put(DragContainer.AddNode, dragContainer);
+
+            e.getDragboard().setContent(content);
+            e.setDropCompleted(true);
+        };
+
+        mRoot.setOnDragDone((e) -> {
+            mCanvasPane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
+            mCanvasPane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
+            mBasePane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
+
+            mDragItem.setVisible(false);
+
+            DragContainer dragContainer = (DragContainer) e.getDragboard().getContent(DragContainer.AddNode);
+            if (dragContainer != null) {
+                Point2D point = dragContainer.getDropCoordinates();
+
+                List<ActionType> actionTypes = mActionTypes.stream()
+                        .filter((a) -> a.getName().equals(dragContainer.getName()))
+                        .collect(Collectors.toList());
+
+                ActionIcon actionIcon = new ActionIcon(actionTypes.get(0));
+                mCanvasPane.getChildren().add(actionIcon);
+
+                actionIcon.relocateToPoint(point);
+            }
+
+            e.consume();
+        });
     }
 }
