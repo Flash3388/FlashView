@@ -218,7 +218,15 @@ public class MainWindow {
                     }
 
                     if (source != null && target != null) {
-                        link.bindEnds(source, target);
+                        if (source.isConnectedToNode()) {
+                            mCanvasPane.getChildren().remove(source.getConnectingLink());
+                        }
+
+                        if (target.isConnectedToNode() && target.getConnectedNode().equals(source)) {
+                            System.out.println("Nope");
+                        } else {
+                            link.bindEnds(source, target);
+                        }
                     }
                 }
             }

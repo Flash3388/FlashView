@@ -17,9 +17,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DraggableBlock extends AnchorPane {
 
@@ -40,7 +39,8 @@ public class DraggableBlock extends AnchorPane {
 
     private final NodeLink mNodeLink;
 
-    private final List<String> mLinkId;
+    private final AtomicReference<DraggableBlock> mConnectedBlock;
+    private final AtomicReference<NodeLink> mConnectingLink;
 
     public DraggableBlock() {
         mData = new Pane();
@@ -56,7 +56,8 @@ public class DraggableBlock extends AnchorPane {
 
         setId(UUID.randomUUID().toString());
 
-        mLinkId = new ArrayList<>();
+        mConnectedBlock = new AtomicReference<>();
+        mConnectingLink = new AtomicReference<>();
         mNodeLink = new NodeLink();
         mNodeLink.setVisible(false);
 
@@ -66,6 +67,9 @@ public class DraggableBlock extends AnchorPane {
 
         mNextLink = createLinkPane();
         mPrevLink = new AnchorPane();//createLinkPane();
+        mPrevLink.setOnDragDropped(mLinkHandleDragDropped);
+        mPrevLink.setPrefWidth(25.0);
+        mPrevLink.setOpacity(1.0);
 
         mData.setOnDragDetected((e) -> {
             getParent().setOnDragOver(null);
@@ -107,8 +111,21 @@ public class DraggableBlock extends AnchorPane {
         mData.getChildren().add(node);
     }
 
-    public void registerLink(String id) {
-        mLinkId.add(id);
+    public void registerNextNode(DraggableBlock block, NodeLink connectingLink) {
+        mConnectedBlock.set(block);
+        mConnectingLink.set(connectingLink);
+    }
+
+    public NodeLink getConnectingLink() {
+        return mConnectingLink.get();
+    }
+
+    public boolean isConnectedToNode() {
+        return mConnectedBlock.get() != null;
+    }
+
+    public DraggableBlock getConnectedNode() {
+        return mConnectedBlock.get();
     }
 
     public void relocateToPoint(Point2D p) {
