@@ -2,13 +2,14 @@ package com.flash3388.flashview.gui;
 
 import com.flash3388.flashview.commands.Command;
 import com.flash3388.flashview.commands.CommandType;
+import com.flash3388.flashview.deploy.Deployer;
 import com.flash3388.flashview.gui.blocks.CommandBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
 import com.flash3388.flashview.gui.blocks.StartBlock;
 import com.flash3388.flashview.gui.drag.DragType;
+import com.flash3388.flashview.gui.drag.IconDragContainer;
 import com.flash3388.flashview.gui.drag.LinkDragContainer;
 import com.flash3388.flashview.gui.icons.ActionIcon;
-import com.flash3388.flashview.gui.drag.IconDragContainer;
 import com.flash3388.flashview.gui.icons.DragIcon;
 import com.flash3388.flashview.gui.link.NodeLink;
 import com.flash3388.flashview.image.ImageLoader;
@@ -35,11 +36,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
@@ -49,6 +46,7 @@ public class MainWindow {
     private final double mWidth;
     private final double mHeight;
     private final List<CommandType> mCommandTypes;
+    private final Deployer mDeployer;
 
     private final AnchorPane mRoot;
     private final SplitPane mBasePane;
@@ -65,10 +63,11 @@ public class MainWindow {
     private EventHandler<DragEvent> mIconDragDropped = null;
     private EventHandler<DragEvent> mIconDragOverRightPane = null;
 
-    public MainWindow(double width, double height, List<CommandType> commandTypes, ImageLoader imageLoader) {
+    public MainWindow(double width, double height, List<CommandType> commandTypes, Deployer deployer, ImageLoader imageLoader) {
         mWidth = width;
         mHeight = height;
         mCommandTypes = commandTypes;
+        mDeployer = deployer;
         mImageLoader = imageLoader;
 
         mRoot = new AnchorPane();
@@ -97,7 +96,6 @@ public class MainWindow {
         canvasScroll.setContent(mCanvasPane);
         canvasScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         canvasScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
-        canvasScroll.setPannable(true);
         canvasScroll.setFitToWidth(true);
         canvasScroll.setFitToHeight(true);
         mCanvasScrollPane = canvasScroll;
@@ -129,10 +127,9 @@ public class MainWindow {
             Queue<Command> commands = collectCommands();
             JsonElement serialized = serializeCommands(commands);
 
-            String data = serialized.toString();
             try {
-                Files.write(Paths.get("asd.json"), Collections.singleton(data), new StandardOpenOption[]{StandardOpenOption.CREATE});
-            } catch (IOException e1) {
+                mDeployer.deploy(serialized);
+            } catch (Exception e1) {
                 e1.printStackTrace();
             }
         });

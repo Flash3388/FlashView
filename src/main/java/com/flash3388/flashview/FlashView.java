@@ -1,7 +1,9 @@
 package com.flash3388.flashview;
 
+import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.commands.CommandTypeFactory;
 import com.flash3388.flashview.commands.CommandTypeInitializationException;
+import com.flash3388.flashview.deploy.Deployer;
 import com.flash3388.flashview.gui.FlashViewGui;
 import com.flash3388.flashview.image.ImageLoader;
 import com.flash3388.flashview.gui.MainWindow;
@@ -11,6 +13,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
@@ -20,10 +23,14 @@ public class FlashView {
     private static final double WINDOW_HEIGHT = 800;
 
     private final ExecutorService mExecutorService;
+    private final Deployer mDeployer;
+    private final ImageLoader mImageLoader;
     private final Logger mLogger;
 
-    public FlashView(ExecutorService executorService, Logger logger) {
+    public FlashView(ExecutorService executorService, Deployer deployer, ImageLoader imageLoader, Logger logger) {
         mExecutorService = executorService;
+        mDeployer = deployer;
+        mImageLoader = imageLoader;
         mLogger = logger;
     }
 
@@ -39,7 +46,9 @@ public class FlashView {
         try {
             CountDownLatch runLatch = new CountDownLatch(1);
 
-            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT, CommandTypeFactory.createAll(new ImageLoader()), new ImageLoader());
+            List<CommandType> commandTypes = CommandTypeFactory.createAll(mImageLoader);
+            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
+                    commandTypes, mDeployer, mImageLoader);
 
             Platform.runLater(()-> {
                 try {
