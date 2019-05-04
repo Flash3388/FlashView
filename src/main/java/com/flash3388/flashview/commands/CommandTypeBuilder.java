@@ -1,6 +1,6 @@
 package com.flash3388.flashview.commands;
 
-import com.flash3388.flashview.commands.parameters.CommandParameter;
+import com.flash3388.flashview.commands.parameters.CommandParameterType;
 import com.flash3388.flashview.image.ImageLoader;
 import javafx.scene.image.Image;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class CommandTypeBuilder {
 
     private final String mName;
-    private final List<CommandParameter<?>> mParameters;
+    private final List<CommandParameterType<?>> mParameters;
     private String mIconPath;
 
     public CommandTypeBuilder(String name) {
@@ -21,7 +21,7 @@ public class CommandTypeBuilder {
         mIconPath = null;
     }
 
-    public CommandTypeBuilder addParameter(CommandParameter<?> parameter) {
+    public CommandTypeBuilder addParameter(CommandParameterType<?> parameter) {
         mParameters.add(parameter);
         return this;
     }

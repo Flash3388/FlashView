@@ -1,6 +1,6 @@
 package com.flash3388.flashview.commands;
 
-import com.flash3388.flashview.commands.parameters.DoubleParameter;
+import com.flash3388.flashview.commands.parameters.DoubleParameterType;
 import com.flash3388.flashview.commands.parameters.range.Ranges;
 import com.flash3388.flashview.image.ImageLoader;
 
@@ -16,7 +16,7 @@ public class CommandTypeFactory {
         try {
             return Arrays.asList(
                     new CommandTypeBuilder("Move Distance")
-                    .addParameter(new DoubleParameter("Distance [CM]", Ranges.doubleRange(0.0, 100.0)))
+                    .addParameter(new DoubleParameterType("Distance [CM]", Ranges.doubleRange(0.0, 100.0)))
                     .setIconPath("/MoveDistance.jpg")
                     .build(imageLoader)
             );

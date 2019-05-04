@@ -1,7 +1,9 @@
 package com.flash3388.flashview.gui.blocks;
 
+import com.flash3388.flashview.commands.Command;
 import com.flash3388.flashview.commands.data.DataType;
 import com.flash3388.flashview.commands.parameters.CommandParameter;
+import com.flash3388.flashview.commands.parameters.CommandParameterType;
 import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.commands.parameters.range.ValueRange;
 import javafx.geometry.Pos;
@@ -13,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +24,11 @@ import java.util.Optional;
 public class CommandBlock extends DraggableBlock {
 
     private final CommandType mCommandType;
-    private final Map<CommandParameter, TextField> mParamtersfields;
+    private final Map<CommandParameterType<?>, TextField> mParametersFields;
 
     public CommandBlock(CommandType commandType) {
         mCommandType = commandType;
-        mParamtersfields = new HashMap<>();
+        mParametersFields = new HashMap<>();
 
         initView();
     }
@@ -50,9 +53,9 @@ public class CommandBlock extends DraggableBlock {
 
         root.getChildren().add(imageView);
 
-        List<CommandParameter<?>> parameters = mCommandType.getParameters();
+        List<CommandParameterType<?>> parameters = mCommandType.getParameters();
         VBox parametersBox = new VBox();
-        for (CommandParameter<?> parameter : parameters) {
+        for (CommandParameterType<?> parameter : parameters) {
             parametersBox.getChildren().add(createForParameter(parameter));
         }
 
@@ -61,7 +64,7 @@ public class CommandBlock extends DraggableBlock {
         addData(totalRoot);
     }
 
-    private <T> Node createForParameter(CommandParameter<T> parameter) {
+    private <T> Node createForParameter(CommandParameterType<T> parameter) {
         HBox box = new HBox();
         box.setSpacing(1);
 
@@ -69,12 +72,7 @@ public class CommandBlock extends DraggableBlock {
         TextField field = new TextField();
         field.focusedProperty().addListener((obs, o, n) -> {
             if (!n) {
-                DataType<T> type = parameter.getValueType();
-                Optional<T> optional = type.tryConvert(field.getText());
-
-                ValueRange<T> valueRange = parameter.getValueRange();
-                if (!optional.isPresent() || !valueRange.isInRange(optional.get())) {
-                    // invalid input
+                if (!isValidValue(parameter, field.getText())) {
                     field.setText("");
                 }
             }
@@ -82,8 +80,41 @@ public class CommandBlock extends DraggableBlock {
 
         box.getChildren().addAll(label, field);
 
-        mParamtersfields.put(parameter, field);
+        mParametersFields.put(parameter, field);
 
         return box;
+    }
+
+    public Command toCommand() {
+        List<CommandParameter<?>> parameters = new ArrayList<>();
+
+        for (Map.Entry<CommandParameterType<?>, TextField> entry : mParametersFields.entrySet()) {
+            CommandParameterType<?> type = entry.getKey();
+            String value = entry.getValue().getText();
+
+            if (!isValidValue(type, value)) {
+                System.out.println("Not Valid");
+                return null;
+            }
+
+            CommandParameter<?> parameter = createParameter(type, value);
+            parameters.add(parameter);
+        }
+
+        return new Command(mCommandType, parameters);
+    }
+
+    private <T> boolean isValidValue(CommandParameterType<T> parameter, String value) {
+        DataType<T> type = parameter.getValueType();
+        Optional<T> optional = type.tryConvert(value);
+
+        ValueRange<T> valueRange = parameter.getValueRange();
+
+        return optional.isPresent() && valueRange.isInRange(optional.get());
+    }
+
+    private <T> CommandParameter<T> createParameter(CommandParameterType<T> type, String value) {
+        Optional<T> convertedType = type.getValueType().tryConvert(value);
+        return new CommandParameter<>(type, convertedType.get());
     }
 }

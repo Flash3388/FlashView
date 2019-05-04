@@ -4,12 +4,12 @@ import com.flash3388.flashview.commands.data.DataType;
 import com.flash3388.flashview.commands.data.DataTypes;
 import com.flash3388.flashview.commands.parameters.range.ValueRange;
 
-public class DoubleParameter implements CommandParameter<Double> {
+public class DoubleParameterType implements CommandParameterType<Double> {
 
     private final String mName;
     private final ValueRange<Double> mValueRange;
 
-    public DoubleParameter(String name, ValueRange<Double> valueRange) {
+    public DoubleParameterType(String name, ValueRange<Double> valueRange) {
         mName = name;
         mValueRange = valueRange;
     }

@@ -1,5 +1,6 @@
 package com.flash3388.flashview.gui;
 
+import com.flash3388.flashview.commands.Command;
 import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.gui.blocks.CommandBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
@@ -11,6 +12,8 @@ import com.flash3388.flashview.gui.drag.IconDragContainer;
 import com.flash3388.flashview.gui.icons.DragIcon;
 import com.flash3388.flashview.gui.link.NodeLink;
 import com.flash3388.flashview.image.ImageLoader;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -32,7 +35,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class MainWindow {
@@ -110,11 +119,47 @@ public class MainWindow {
         Button deploy = new Button("Deploy");
         deploy.setOnAction((e) -> {
             System.out.println("Deploy");
+
+            Queue<Command> commands = collectCommands();
+            JsonElement serialized = serializeCommands(commands);
+
+            String data = serialized.toString();
+            try {
+                Files.write(Paths.get("asd.json"), Collections.singleton(data), new StandardOpenOption[]{StandardOpenOption.CREATE});
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         });
 
         box.getChildren().add(deploy);
 
         return box;
+    }
+
+    private Queue<Command> collectCommands() {
+        Queue<Command> commands = new ArrayDeque<>();
+
+        DraggableBlock draggableBlock = mStartBlock;
+        while (draggableBlock.isConnectedToNode()) {
+            draggableBlock =  draggableBlock.getConnectedNode();
+
+            if (draggableBlock instanceof CommandBlock) {
+                Command command = ((CommandBlock) draggableBlock).toCommand();
+                commands.add(command);
+            }
+        }
+
+        return commands;
+    }
+
+    private JsonElement serializeCommands(Queue<Command> commands) {
+        JsonArray commandsArray = new JsonArray();
+
+        for(Command command : commands) {
+            commandsArray.add(command.toJson());
+        }
+
+        return commandsArray;
     }
 
     private Pane createCanvas() {
@@ -196,13 +241,15 @@ public class MainWindow {
             System.out.println("IconOverD");
             IconDragContainer iconDragContainer = (IconDragContainer) e.getDragboard().getContent(DragType.ADD_NODE);
 
-            iconDragContainer.setDropCoordinates(new Point2D(e.getSceneX(), e.getSceneY()));
+            if (iconDragContainer != null) {
+                iconDragContainer.setDropCoordinates(new Point2D(e.getSceneX(), e.getSceneY()));
 
-            ClipboardContent content = new ClipboardContent();
-            content.put(DragType.ADD_NODE, iconDragContainer);
+                ClipboardContent content = new ClipboardContent();
+                content.put(DragType.ADD_NODE, iconDragContainer);
 
-            e.getDragboard().setContent(content);
-            e.setDropCompleted(true);
+                e.getDragboard().setContent(content);
+                e.setDropCompleted(true);
+            }
         };
 
         mRoot.setOnDragDone((e) -> {

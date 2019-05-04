@@ -1,11 +1,20 @@
 package com.flash3388.flashview.commands.parameters;
 
-import com.flash3388.flashview.commands.data.DataType;
-import com.flash3388.flashview.commands.parameters.range.ValueRange;
+public class CommandParameter<T> {
 
-public interface CommandParameter<T> {
+    private final CommandParameterType<T> mParameterType;
+    private final T mValue;
 
-    String getName();
-    DataType<T> getValueType();
-    ValueRange<T> getValueRange();
+    public CommandParameter(CommandParameterType<T> parameterType, T value) {
+        mParameterType = parameterType;
+        mValue = value;
+    }
+
+    public CommandParameterType<T> getParameterType() {
+        return mParameterType;
+    }
+
+    public T getValue() {
+        return mValue;
+    }
 }
