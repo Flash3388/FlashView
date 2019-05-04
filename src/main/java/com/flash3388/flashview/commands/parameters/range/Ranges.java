@@ -9,4 +9,8 @@ public class Ranges {
     public static ValueRange<Double> doubleRange(double min, double max) {
         return value -> ExtendedMath.constrained(value, min, max);
     }
+
+    public static ValueRange<Integer> intRange(int min, int max) {
+        return value -> ExtendedMath.constrained(value, min, max);
+    }
 }
