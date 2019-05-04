@@ -2,11 +2,21 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
+def releaseFolder = new File(project.buildDir, 'flashview')
+
 repositories {
     mavenCentral()
 }
 
+configurations {
+    compileExternal
+    compile.extendsFrom compileExternal
+}
+
 dependencies {
+    compileExternal group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.60'
+    compileExternal group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
+    
     compile group: 'com.flash3388.flashlib', name: 'flashutil', version: '2.0.0-alpha.4'
     compile group: 'com.hierynomus', name: 'sshj', version: '0.27.0'
 
@@ -19,12 +29,30 @@ jar {
     destinationDir = project.buildDir
 
     from {
-        configurations.compile.collect {
+        (configurations.compile - configurations.compileExternal).collect {
             it.isDirectory() ? it : zipTree(it)
         }
     }
 
     manifest {
         attributes 'Main-Class': 'com.flash3388.flashview.Main'
+        attributes 'Class-Path': configurations.compileExternal.collect().join(' ')
     }
 }
+
+task copyJarIntoRelease(type: Copy) {
+    from jar.archivePath
+    into releaseFolder
+}
+
+task copyExternalDependenciesIntoRelease(type: Copy) {
+    from configurations.compileExternal
+    into releaseFolder
+}
+
+task buildDistribution {
+    dependsOn copyJarIntoRelease
+    dependsOn copyExternalDependenciesIntoRelease
+}
+
+build.finalizedBy(buildDistribution)
