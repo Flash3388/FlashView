@@ -1,7 +1,7 @@
 package com.flash3388.flashview;
 
-import com.flash3388.flashview.actions.ActionTypeFactory;
-import com.flash3388.flashview.actions.ActionTypeInitializationException;
+import com.flash3388.flashview.commands.CommandTypeFactory;
+import com.flash3388.flashview.commands.CommandTypeInitializationException;
 import com.flash3388.flashview.gui.FlashViewGui;
 import com.flash3388.flashview.image.ImageLoader;
 import com.flash3388.flashview.gui.MainWindow;
@@ -38,7 +38,7 @@ public class FlashView {
         try {
             CountDownLatch runLatch = new CountDownLatch(1);
 
-            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT, ActionTypeFactory.createAll(new ImageLoader()));
+            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT, CommandTypeFactory.createAll(new ImageLoader()));
 
             Platform.runLater(()-> {
                 primaryStage.setScene(mainWindow.createScene());
@@ -49,7 +49,7 @@ public class FlashView {
             });
 
             runLatch.await();
-        } catch (ActionTypeInitializationException | InterruptedException e) {
+        } catch (CommandTypeInitializationException | InterruptedException e) {
             Platform.exit();
             throw new InitializationException(e);
         }

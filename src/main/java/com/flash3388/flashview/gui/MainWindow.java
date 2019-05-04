@@ -1,7 +1,7 @@
 package com.flash3388.flashview.gui;
 
-import com.flash3388.flashview.actions.ActionType;
-import com.flash3388.flashview.gui.blocks.ActionBlock;
+import com.flash3388.flashview.commands.CommandType;
+import com.flash3388.flashview.gui.blocks.CommandBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
 import com.flash3388.flashview.gui.drag.DragType;
 import com.flash3388.flashview.gui.drag.LinkDragContainer;
@@ -27,13 +27,12 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainWindow {
 
     private final double mWidth;
     private final double mHeight;
-    private final List<ActionType> mActionTypes;
+    private final List<CommandType> mCommandTypes;
 
     private final AnchorPane mRoot;
     private final SplitPane mBasePane;
@@ -46,10 +45,10 @@ public class MainWindow {
     private EventHandler<DragEvent> mIconDragDropped = null;
     private EventHandler<DragEvent> mIconDragOverRightPane = null;
 
-    public MainWindow(double width, double height, List<ActionType> actionTypes) {
+    public MainWindow(double width, double height, List<CommandType> commandTypes) {
         mWidth = width;
         mHeight = height;
-        mActionTypes = actionTypes;
+        mCommandTypes = commandTypes;
 
         mRoot = new AnchorPane();
         mBasePane = new SplitPane();
@@ -101,8 +100,8 @@ public class MainWindow {
         content.setSpacing(10.0);
         scrollPane.setContent(content);
 
-        for (ActionType actionType : mActionTypes) {
-            ActionIcon actionIcon = new ActionIcon(actionType);
+        for (CommandType commandType : mCommandTypes) {
+            ActionIcon actionIcon = new ActionIcon(commandType);
             addDragDetection(actionIcon);
 
             content.getChildren().add(actionIcon);
@@ -121,7 +120,7 @@ public class MainWindow {
 
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
-            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getActionType().getName());
+            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getCommandType().getName());
 
             ClipboardContent content = new ClipboardContent();
             content.put(DragType.ADD_NODE, iconDragContainer);
@@ -129,7 +128,7 @@ public class MainWindow {
             Dragboard dragboard = mDragItem.startDragAndDrop(TransferMode.ANY);
             dragboard.setContent(content);
 
-            mDragItem.setImage(dragIcon.getActionType().getIcon());
+            mDragItem.setImage(dragIcon.getCommandType().getIcon());
             mDragItem.toFront();
             mDragItem.setVisible(true);
             mDragItem.setMouseTransparent(true);
@@ -186,13 +185,13 @@ public class MainWindow {
             if (iconDragContainer != null) {
                 Point2D point = iconDragContainer.getDropCoordinates();
 
-                List<ActionType> actionTypes = mActionTypes.stream()
+                List<CommandType> commandTypes = mCommandTypes.stream()
                         .filter((a) -> a.getName().equals(iconDragContainer.getName()))
                         .collect(Collectors.toList());
 
-                ActionBlock actionBlock = new ActionBlock(actionTypes.get(0));
-                mCanvasPane.getChildren().add(actionBlock);
-                actionBlock.relocateToPoint(point);
+                CommandBlock commandBlock = new CommandBlock(commandTypes.get(0));
+                mCanvasPane.getChildren().add(commandBlock);
+                commandBlock.relocateToPoint(point);
             }
 
             LinkDragContainer linkDragContainer = (LinkDragContainer) e.getDragboard().getContent(DragType.ADD_LINK);
