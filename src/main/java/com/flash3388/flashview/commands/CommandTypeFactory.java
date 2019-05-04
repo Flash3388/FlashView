@@ -34,6 +34,12 @@ public class CommandTypeFactory {
                             .build(imageLoader),
                     new CommandTypeBuilder("LiftDown")
                             .setIconPath("/lift-down.jpg")
+                            .build(imageLoader),
+                    new CommandTypeBuilder("BallOut")
+                            .setIconPath("/ball-out.png")
+                            .build(imageLoader),
+                    new CommandTypeBuilder("BallIn")
+                            .setIconPath("/ball-in.png")
                             .build(imageLoader)
             );
         } catch (IOException e) {

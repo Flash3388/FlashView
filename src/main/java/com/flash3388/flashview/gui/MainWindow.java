@@ -122,8 +122,6 @@ public class MainWindow {
 
         Button deploy = new Button("Deploy");
         deploy.setOnAction((e) -> {
-            System.out.println("Deploy");
-
             Queue<Command> commands = collectCommands();
             JsonElement serialized = serializeCommands(commands);
 
