@@ -39,6 +39,7 @@ public class DraggableBlock extends AnchorPane {
 
     private final NodeLink mNodeLink;
 
+    private final AtomicReference<DraggableBlock> mBlockConnectedToThis;
     private final AtomicReference<DraggableBlock> mConnectedBlock;
     private final AtomicReference<NodeLink> mConnectingLink;
 
@@ -67,6 +68,7 @@ public class DraggableBlock extends AnchorPane {
 
         setId(UUID.randomUUID().toString());
 
+        mBlockConnectedToThis = new AtomicReference<>();
         mConnectedBlock = new AtomicReference<>();
         mConnectingLink = new AtomicReference<>();
         mNodeLink = new NodeLink();
@@ -76,6 +78,17 @@ public class DraggableBlock extends AnchorPane {
             Circle connector = new Circle();
             connector.setRadius(5.0);
             getChildren().add(connector);
+
+            connector.setOnMouseClicked((e) -> {
+                removeConnection();
+
+                if (isABlockConnectedToThis()) {
+                    DraggableBlock draggableBlock = mBlockConnectedToThis.get();
+                    draggableBlock.removeConnection();
+                }
+
+                mParentPane.getChildren().remove(this);
+            });
         }
 
         mNextLink = createLinkPane();
@@ -129,6 +142,26 @@ public class DraggableBlock extends AnchorPane {
     public void registerNextNode(DraggableBlock block, NodeLink connectingLink) {
         mConnectedBlock.set(block);
         mConnectingLink.set(connectingLink);
+
+        block.registerBlockConnected(this);
+    }
+
+    public void registerBlockConnected(DraggableBlock block) {
+        mBlockConnectedToThis.set(block);
+    }
+
+    public void removeConnection() {
+        if (isConnectedToNode()) {
+            mParentPane.getChildren().remove(mConnectingLink.get());
+            mConnectingLink.set(null);
+
+            mConnectedBlock.get().registerBlockConnected(null);
+            mConnectedBlock.set(null);
+        }
+    }
+
+    public boolean isABlockConnectedToThis() {
+        return mBlockConnectedToThis.get() != null;
     }
 
     public NodeLink getConnectingLink() {
