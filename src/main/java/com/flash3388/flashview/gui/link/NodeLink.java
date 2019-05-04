@@ -7,6 +7,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
 
 import java.util.UUID;
@@ -24,10 +25,17 @@ public class NodeLink extends AnchorPane {
 
     public NodeLink() {
         mNodeLink = new CubicCurve();
+        mNodeLink.setControlX2(50);
+        mNodeLink.setControlY1(10);
+        mNodeLink.setControlY2(10);
+        mNodeLink.setEndX(10);
+        mNodeLink.setFill(Color.web("#19f3ff00"));
+        mNodeLink.setStroke(Color.BLACK);
+
+        getChildren().add(mNodeLink);
 
         mControlOffsetX.set(100.0);
         mControlOffsetY.set(50.0);
-
 
         mControlDirectionX1.bind(new When (
                 mNodeLink.startXProperty().greaterThan(mNodeLink.endXProperty()))
@@ -73,14 +81,12 @@ public class NodeLink extends AnchorPane {
 
     public void bindEnds(DraggableBlock source, DraggableBlock target) {
         mNodeLink.startXProperty().bind(
-                Bindings.add(source.layoutXProperty(), (source.getWidth() / 2.0)));
-
+                Bindings.add(source.layoutXProperty(), (source.getWidth())));
         mNodeLink.startYProperty().bind(
                 Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
 
         mNodeLink.endXProperty().bind(
-                Bindings.add(target.layoutXProperty(), (target.getWidth() / 2.0)));
-
+                Bindings.add(target.layoutXProperty(), (0.0)));
         mNodeLink.endYProperty().bind(
                 Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
 

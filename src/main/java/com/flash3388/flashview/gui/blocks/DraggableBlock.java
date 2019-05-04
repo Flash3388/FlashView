@@ -1,9 +1,9 @@
 package com.flash3388.flashview.gui.blocks;
 
+import com.flash3388.flashview.gui.drag.BlockDragContainer;
 import com.flash3388.flashview.gui.drag.DragType;
 import com.flash3388.flashview.gui.drag.LinkDragContainer;
 import com.flash3388.flashview.gui.link.NodeLink;
-import com.flash3388.flashview.gui.pane.RelocatablePane;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -13,21 +13,18 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DraggableBlock extends RelocatablePane {
+public class DraggableBlock extends AnchorPane {
 
     private final AnchorPane mNextLink;
+    private final AnchorPane mPrevLink;
     private final Pane mData;
 
     private EventHandler<MouseEvent> mLinkHandleDragDetected;
@@ -38,12 +35,17 @@ public class DraggableBlock extends RelocatablePane {
     private EventHandler<DragEvent> mContextDragOver;
     private EventHandler<DragEvent> mContextDragDropped;
 
+    private Point2D mDragOffset;
+    private AnchorPane mParentPane;
+
     private final NodeLink mNodeLink;
 
     private final List<String> mLinkId;
 
     public DraggableBlock() {
         mData = new Pane();
+
+        mDragOffset = new Point2D(0.0, 0.0);
 
         BorderPane borderPane = new BorderPane();
         borderPane.setStyle("-fx-background-radius: 1; -fx-background-color: black;");
@@ -62,16 +64,43 @@ public class DraggableBlock extends RelocatablePane {
         connector.setRadius(5.0);
         getChildren().add(connector);
 
-        initializeEventHandlers();
-        initializeLinkDragHandlers();
-
         mNextLink = createLinkPane();
+        mPrevLink = new AnchorPane();//createLinkPane();
 
-        mData.setOnDragDropped(mContextDragDropped);
-        mData.setOnDragOver(mContextDragOver);
+        mData.setOnDragDetected((e) -> {
+            getParent().setOnDragOver(null);
+            getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragOver(null);
+            getParent().getParent().setOnDragDropped(null);
+
+            getParent().setOnDragOver(mContextDragOver);
+            getParent().setOnDragDropped(mContextDragDropped);
+            getParent().getParent().setOnDragOver(mContextDragOver);
+            getParent().getParent().setOnDragDropped(mContextDragDropped);
+
+            System.out.println("DDD");
+
+            mDragOffset = new Point2D(e.getX(), e.getY());
+
+            relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
+
+            ClipboardContent content = new ClipboardContent();
+            BlockDragContainer dragContainer = new BlockDragContainer();
+            content.put(DragType.DRAG_NODE, dragContainer);
+
+            Dragboard dragboard = startDragAndDrop(TransferMode.ANY);
+            dragboard.setContent(content);
+
+            e.consume();
+        });
 
         borderPane.setRight(mNextLink);
+        borderPane.setLeft(mPrevLink);
         borderPane.setCenter(mData);
+
+        parentProperty().addListener((obs, o, n) -> {
+            mParentPane = (AnchorPane) getParent();
+        });
     }
 
     public void addData(Node node) {
@@ -80,6 +109,15 @@ public class DraggableBlock extends RelocatablePane {
 
     public void registerLink(String id) {
         mLinkId.add(id);
+    }
+
+    public void relocateToPoint(Point2D p) {
+        Point2D localCoords = getParent().sceneToLocal(p);
+
+        relocate (
+                (int) (localCoords.getX() - mDragOffset.getX()),
+                (int) (localCoords.getY() - mDragOffset.getY())
+        );
     }
 
     private AnchorPane createLinkPane() {
@@ -108,12 +146,16 @@ public class DraggableBlock extends RelocatablePane {
             e.acceptTransferModes(TransferMode.ANY);
             relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
+            //System.out.println("Over");
+
             e.consume();
         };
 
         mContextDragDropped = (e) -> {
             getParent().setOnDragOver(null);
             getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragOver(null);
+            getParent().getParent().setOnDragDropped(null);
 
             e.setDropCompleted(true);
 
@@ -125,9 +167,15 @@ public class DraggableBlock extends RelocatablePane {
         mLinkHandleDragDetected = (e) -> {
             getParent().setOnDragOver(null);
             getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragOver(null);
 
             getParent().setOnDragOver(mContextLinkDragOver);
             getParent().setOnDragDropped(mContextLinkDragDropped);
+            getParent().getParent().setOnDragDropped(mContextLinkDragDropped);
+            getParent().getParent().setOnDragOver(mContextLinkDragOver);
+
+            mParentPane.getChildren().add(0, mNodeLink);
 
             Point2D p = new Point2D(
                     getLayoutX() + (getWidth() / 2.0),
@@ -135,6 +183,8 @@ public class DraggableBlock extends RelocatablePane {
 
             mNodeLink.setVisible(false);
             mNodeLink.setStart(p);
+
+            System.out.println("Drag link: " + getId());
 
             ClipboardContent content = new ClipboardContent();
             LinkDragContainer dragContainer = new LinkDragContainer(getId());
@@ -149,13 +199,18 @@ public class DraggableBlock extends RelocatablePane {
         mLinkHandleDragDropped = (e) -> {
             getParent().setOnDragOver(null);
             getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragOver(null);
 
             LinkDragContainer dragContainer = (LinkDragContainer) e.getDragboard().getContent(DragType.ADD_LINK);
             if (dragContainer == null) {
                 return;
             }
 
+            System.out.println("Drag link dropped: " + getId());
+
             mNodeLink.setVisible(false);
+            mParentPane.getChildren().remove(0);
 
             ClipboardContent content = new ClipboardContent();
             dragContainer.setTarget(getId());
@@ -171,7 +226,7 @@ public class DraggableBlock extends RelocatablePane {
         mContextLinkDragOver = (e) -> {
             e.acceptTransferModes(TransferMode.ANY);
 
-            if (mNodeLink.isVisible())
+            if (!mNodeLink.isVisible())
                 mNodeLink.setVisible(true);
 
             mNodeLink.setEnd(new Point2D(e.getX(), e.getY()));
@@ -182,8 +237,11 @@ public class DraggableBlock extends RelocatablePane {
         mContextLinkDragDropped = (e) -> {
             getParent().setOnDragOver(null);
             getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragDropped(null);
+            getParent().getParent().setOnDragOver(null);
 
-            mNodeLink.setVisible(true);
+            mNodeLink.setVisible(false);
+            mParentPane.getChildren().remove(0);
 
             e.setDropCompleted(true);
 

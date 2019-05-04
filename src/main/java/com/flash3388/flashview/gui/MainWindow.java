@@ -4,12 +4,15 @@ import com.flash3388.flashview.actions.ActionType;
 import com.flash3388.flashview.gui.blocks.ActionBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
 import com.flash3388.flashview.gui.drag.DragType;
+import com.flash3388.flashview.gui.drag.LinkDragContainer;
 import com.flash3388.flashview.gui.icons.ActionIcon;
 import com.flash3388.flashview.gui.drag.IconDragContainer;
 import com.flash3388.flashview.gui.icons.DragIcon;
+import com.flash3388.flashview.gui.link.NodeLink;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
@@ -24,6 +27,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MainWindow {
 
@@ -36,6 +40,7 @@ public class MainWindow {
     private Pane mCanvasPane;
     private Control mSelectionPane;
     private DragIcon mDragItem;
+    private ScrollPane mCanvasScrollPane;
 
     private EventHandler<DragEvent> mIconDragOverRoot = null;
     private EventHandler<DragEvent> mIconDragDropped = null;
@@ -64,7 +69,16 @@ public class MainWindow {
         mCanvasPane = createCanvas();
         mSelectionPane = createToolBox();
 
-        mBasePane.getItems().addAll(mSelectionPane, mCanvasPane);
+        ScrollPane canvasScroll = new ScrollPane();
+        canvasScroll.setContent(mCanvasPane);
+        canvasScroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        canvasScroll.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        canvasScroll.setPannable(true);
+        canvasScroll.setFitToWidth(true);
+        canvasScroll.setFitToHeight(true);
+        mCanvasScrollPane = canvasScroll;
+
+        mBasePane.getItems().addAll(mSelectionPane, canvasScroll);
 
         mRoot.getChildren().add(mBasePane);
 
@@ -102,6 +116,8 @@ public class MainWindow {
             mBasePane.setOnDragOver(mIconDragOverRoot);
             mCanvasPane.setOnDragOver(mIconDragOverRightPane);
             mCanvasPane.setOnDragDropped(mIconDragDropped);
+            mCanvasScrollPane.setOnDragOver(mIconDragOverRightPane);
+            mCanvasScrollPane.setOnDragDropped(mIconDragDropped);
 
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
@@ -126,6 +142,8 @@ public class MainWindow {
         mIconDragOverRoot = (e) -> {
             Point2D point = mCanvasPane.sceneToLocal(e.getSceneX(), e.getSceneY());
 
+            System.out.println("IconOver");
+
             if (!mCanvasPane.boundsInLocalProperty().get().contains(point)) {
                 e.acceptTransferModes(TransferMode.ANY);
                 mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
@@ -135,6 +153,7 @@ public class MainWindow {
         };
 
         mIconDragOverRightPane = (e) -> {
+            System.out.println("IconOverR");
             e.acceptTransferModes(TransferMode.ANY);
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
@@ -142,6 +161,7 @@ public class MainWindow {
         };
 
         mIconDragDropped = (e) -> {
+            System.out.println("IconOverD");
             IconDragContainer iconDragContainer = (IconDragContainer) e.getDragboard().getContent(DragType.ADD_NODE);
 
             iconDragContainer.setDropCoordinates(new Point2D(e.getSceneX(), e.getSceneY()));
@@ -156,6 +176,8 @@ public class MainWindow {
         mRoot.setOnDragDone((e) -> {
             mCanvasPane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
             mCanvasPane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
+            mCanvasScrollPane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRightPane);
+            mCanvasScrollPane.removeEventHandler(DragEvent.DRAG_DROPPED, mIconDragDropped);
             mBasePane.removeEventHandler(DragEvent.DRAG_OVER, mIconDragOverRoot);
 
             mDragItem.setVisible(false);
@@ -171,6 +193,34 @@ public class MainWindow {
                 ActionBlock actionBlock = new ActionBlock(actionTypes.get(0));
                 mCanvasPane.getChildren().add(actionBlock);
                 actionBlock.relocateToPoint(point);
+            }
+
+            LinkDragContainer linkDragContainer = (LinkDragContainer) e.getDragboard().getContent(DragType.ADD_LINK);
+            if (linkDragContainer != null) {
+                String sourceId = linkDragContainer.getId();
+                String targetId = linkDragContainer.getTarget();
+
+                if (sourceId != null && targetId != null) {
+                    NodeLink link = new NodeLink();
+                    mCanvasPane.getChildren().add(0, link);
+
+                    DraggableBlock source = null;
+                    DraggableBlock target = null;
+
+                    for (Node node : mCanvasPane.getChildren()) {
+                        if (sourceId.equals(node.getId())) {
+                            source = (DraggableBlock) node;
+                        }
+
+                        if (targetId.equals(node.getId())) {
+                            target = (DraggableBlock) node;
+                        }
+                    }
+
+                    if (source != null && target != null) {
+                        link.bindEnds(source, target);
+                    }
+                }
             }
 
             e.consume();
