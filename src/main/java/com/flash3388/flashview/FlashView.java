@@ -10,12 +10,13 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
 public class FlashView {
 
-    private static final double WINDOW_WIDTH = 800;
+    private static final double WINDOW_WIDTH = 1000;
     private static final double WINDOW_HEIGHT = 800;
 
     private final ExecutorService mExecutorService;
@@ -38,10 +39,14 @@ public class FlashView {
         try {
             CountDownLatch runLatch = new CountDownLatch(1);
 
-            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT, CommandTypeFactory.createAll(new ImageLoader()));
+            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT, CommandTypeFactory.createAll(new ImageLoader()), new ImageLoader());
 
             Platform.runLater(()-> {
-                primaryStage.setScene(mainWindow.createScene());
+                try {
+                    primaryStage.setScene(mainWindow.createScene());
+                } catch (IOException e) {
+                    Platform.exit();
+                }
                 primaryStage.setOnCloseRequest(new WindowCloseRequest());
                 primaryStage.show();
 

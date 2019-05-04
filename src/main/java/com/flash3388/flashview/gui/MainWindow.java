@@ -3,17 +3,21 @@ package com.flash3388.flashview.gui;
 import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.gui.blocks.CommandBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
+import com.flash3388.flashview.gui.blocks.StartBlock;
 import com.flash3388.flashview.gui.drag.DragType;
 import com.flash3388.flashview.gui.drag.LinkDragContainer;
 import com.flash3388.flashview.gui.icons.ActionIcon;
 import com.flash3388.flashview.gui.drag.IconDragContainer;
 import com.flash3388.flashview.gui.icons.DragIcon;
 import com.flash3388.flashview.gui.link.NodeLink;
+import com.flash3388.flashview.image.ImageLoader;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
@@ -22,9 +26,12 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,25 +43,30 @@ public class MainWindow {
 
     private final AnchorPane mRoot;
     private final SplitPane mBasePane;
+    private final ImageLoader mImageLoader;
+
     private Pane mCanvasPane;
     private Control mSelectionPane;
     private DragIcon mDragItem;
     private ScrollPane mCanvasScrollPane;
 
+    private DraggableBlock mStartBlock;
+
     private EventHandler<DragEvent> mIconDragOverRoot = null;
     private EventHandler<DragEvent> mIconDragDropped = null;
     private EventHandler<DragEvent> mIconDragOverRightPane = null;
 
-    public MainWindow(double width, double height, List<CommandType> commandTypes) {
+    public MainWindow(double width, double height, List<CommandType> commandTypes, ImageLoader imageLoader) {
         mWidth = width;
         mHeight = height;
         mCommandTypes = commandTypes;
+        mImageLoader = imageLoader;
 
         mRoot = new AnchorPane();
         mBasePane = new SplitPane();
     }
 
-    public Scene createScene() {
+    public Scene createScene() throws IOException {
         mBasePane.setDividerPositions(0.2);
         mBasePane.setPrefSize(mWidth, mHeight);
 
@@ -77,11 +89,32 @@ public class MainWindow {
         canvasScroll.setFitToHeight(true);
         mCanvasScrollPane = canvasScroll;
 
-        mBasePane.getItems().addAll(mSelectionPane, canvasScroll);
+        BorderPane leftPane = new BorderPane();
+        leftPane.setCenter(mSelectionPane);
+        leftPane.setBottom(createControlsPane());
+
+        mBasePane.getItems().addAll(leftPane, canvasScroll);
 
         mRoot.getChildren().add(mBasePane);
 
+        mStartBlock = new StartBlock(mImageLoader);
+        mCanvasPane.getChildren().add(mStartBlock);
+
         return new Scene(mRoot, mWidth, mHeight);
+    }
+
+    private Node createControlsPane() {
+        HBox box = new HBox();
+        box.setAlignment(Pos.CENTER);
+
+        Button deploy = new Button("Deploy");
+        deploy.setOnAction((e) -> {
+            System.out.println("Deploy");
+        });
+
+        box.getChildren().add(deploy);
+
+        return box;
     }
 
     private Pane createCanvas() {
@@ -221,7 +254,7 @@ public class MainWindow {
                             mCanvasPane.getChildren().remove(source.getConnectingLink());
                         }
 
-                        if (target.isConnectedToNode() && target.getConnectedNode().equals(source)) {
+                        if (target.isConnectedToNode() && target.getConnectedNode().equals(source) || !target.isCanBeAttachedTo()) {
                             System.out.println("Nope");
                         } else {
                             link.bindEnds(source, target);

@@ -42,7 +42,18 @@ public class DraggableBlock extends AnchorPane {
     private final AtomicReference<DraggableBlock> mConnectedBlock;
     private final AtomicReference<NodeLink> mConnectingLink;
 
+    private final boolean mCanDrag;
+    private final boolean mCanRemove;
+    private final boolean mCanBeAttachedTo;
+
     public DraggableBlock() {
+        this(true, true, true);
+    }
+
+    public DraggableBlock(boolean canDrag, boolean canRemove, boolean canBeAttachedTo) {
+        mCanDrag = canDrag;
+        mCanRemove = canRemove;
+        mCanBeAttachedTo = canBeAttachedTo;
         mData = new Pane();
 
         mDragOffset = new Point2D(0.0, 0.0);
@@ -61,9 +72,11 @@ public class DraggableBlock extends AnchorPane {
         mNodeLink = new NodeLink();
         mNodeLink.setVisible(false);
 
-        Circle connector = new Circle();
-        connector.setRadius(5.0);
-        getChildren().add(connector);
+        if (mCanRemove) {
+            Circle connector = new Circle();
+            connector.setRadius(5.0);
+            getChildren().add(connector);
+        }
 
         mNextLink = createLinkPane();
         mPrevLink = new AnchorPane();//createLinkPane();
@@ -71,32 +84,34 @@ public class DraggableBlock extends AnchorPane {
         mPrevLink.setPrefWidth(25.0);
         mPrevLink.setOpacity(1.0);
 
-        mData.setOnDragDetected((e) -> {
-            getParent().setOnDragOver(null);
-            getParent().setOnDragDropped(null);
-            getParent().getParent().setOnDragOver(null);
-            getParent().getParent().setOnDragDropped(null);
+        if (mCanDrag) {
+            mData.setOnDragDetected((e) -> {
+                getParent().setOnDragOver(null);
+                getParent().setOnDragDropped(null);
+                getParent().getParent().setOnDragOver(null);
+                getParent().getParent().setOnDragDropped(null);
 
-            getParent().setOnDragOver(mContextDragOver);
-            getParent().setOnDragDropped(mContextDragDropped);
-            getParent().getParent().setOnDragOver(mContextDragOver);
-            getParent().getParent().setOnDragDropped(mContextDragDropped);
+                getParent().setOnDragOver(mContextDragOver);
+                getParent().setOnDragDropped(mContextDragDropped);
+                getParent().getParent().setOnDragOver(mContextDragOver);
+                getParent().getParent().setOnDragDropped(mContextDragDropped);
 
-            System.out.println("DDD");
+                System.out.println("DDD");
 
-            mDragOffset = new Point2D(e.getX(), e.getY());
+                mDragOffset = new Point2D(e.getX(), e.getY());
 
-            relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
+                relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
-            ClipboardContent content = new ClipboardContent();
-            BlockDragContainer dragContainer = new BlockDragContainer();
-            content.put(DragType.DRAG_NODE, dragContainer);
+                ClipboardContent content = new ClipboardContent();
+                BlockDragContainer dragContainer = new BlockDragContainer();
+                content.put(DragType.DRAG_NODE, dragContainer);
 
-            Dragboard dragboard = startDragAndDrop(TransferMode.ANY);
-            dragboard.setContent(content);
+                Dragboard dragboard = startDragAndDrop(TransferMode.ANY);
+                dragboard.setContent(content);
 
-            e.consume();
-        });
+                e.consume();
+            });
+        }
 
         borderPane.setRight(mNextLink);
         borderPane.setLeft(mPrevLink);
@@ -126,6 +141,10 @@ public class DraggableBlock extends AnchorPane {
 
     public DraggableBlock getConnectedNode() {
         return mConnectedBlock.get();
+    }
+
+    public boolean isCanBeAttachedTo() {
+        return mCanBeAttachedTo;
     }
 
     public void relocateToPoint(Point2D p) {
