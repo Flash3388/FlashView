@@ -78,6 +78,10 @@ public class MainWindow {
     public Scene createScene() throws IOException {
         mBasePane.setDividerPositions(0.2);
         mBasePane.setPrefSize(mWidth, mHeight);
+        AnchorPane.setBottomAnchor(mBasePane, 0.0);
+        AnchorPane.setLeftAnchor(mBasePane, 0.0);
+        AnchorPane.setRightAnchor(mBasePane, 0.0);
+        AnchorPane.setTopAnchor(mBasePane, 0.0);
 
         createLayoutDragHandlers();
 
@@ -103,6 +107,8 @@ public class MainWindow {
         leftPane.setBottom(createControlsPane());
 
         mBasePane.getItems().addAll(leftPane, canvasScroll);
+        leftPane.setMaxWidth(mWidth * 0.2);
+        leftPane.setMinWidth(mWidth  * 0.2);
 
         mRoot.getChildren().add(mBasePane);
 
