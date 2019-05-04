@@ -48,7 +48,7 @@ public class DraggableBlock extends AnchorPane {
         mDragOffset = new Point2D(0.0, 0.0);
 
         BorderPane borderPane = new BorderPane();
-        borderPane.setStyle("-fx-background-radius: 1; -fx-background-color: black;");
+        borderPane.setStyle("-fx-border-radius: 1; -fx-border-color: black;");
         getChildren().add(borderPane);
 
         initializeEventHandlers();

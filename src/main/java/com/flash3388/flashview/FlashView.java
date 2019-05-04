@@ -15,8 +15,8 @@ import java.util.concurrent.ExecutorService;
 
 public class FlashView {
 
-    private static final double WINDOW_WIDTH = 600;
-    private static final double WINDOW_HEIGHT = 400;
+    private static final double WINDOW_WIDTH = 800;
+    private static final double WINDOW_HEIGHT = 800;
 
     private final ExecutorService mExecutorService;
     private final Logger mLogger;
