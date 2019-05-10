@@ -6,6 +6,7 @@ import com.flash3388.flashview.commands.parameters.CommandParameter;
 import com.flash3388.flashview.commands.parameters.CommandParameterType;
 import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.commands.parameters.range.ValueRange;
+import com.flash3388.flashview.gui.dialogs.Dialogs;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -14,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,10 +25,12 @@ import java.util.Optional;
 
 public class CommandBlock extends DraggableBlock {
 
+    private final Stage mOwner;
     private final CommandType mCommandType;
     private final Map<CommandParameterType<?>, TextField> mParametersFields;
 
-    public CommandBlock(CommandType commandType) {
+    public CommandBlock(Stage owner, CommandType commandType) {
+        mOwner = owner;
         mCommandType = commandType;
         mParametersFields = new HashMap<>();
 
@@ -72,8 +76,11 @@ public class CommandBlock extends DraggableBlock {
         TextField field = new TextField();
         field.focusedProperty().addListener((obs, o, n) -> {
             if (!n) {
-                if (!isValidValue(parameter, field.getText())) {
+                String fieldText = field.getText();
+                if (!isValidValue(parameter, fieldText)) {
                     field.setText("");
+                    Dialogs.showMessageDialog(mOwner, "Invalid Value",
+                            String.format("\"%s\" is not a valid value for parameter.", fieldText));
                 }
             }
         });

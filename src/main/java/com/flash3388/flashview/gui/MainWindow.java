@@ -38,7 +38,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.controlsfx.dialog.ExceptionDialog;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -290,7 +289,7 @@ public class MainWindow {
                         .filter((a) -> a.getDisplayName().equals(iconDragContainer.getName()))
                         .collect(Collectors.toList());
 
-                CommandBlock commandBlock = new CommandBlock(commandTypes.get(0));
+                CommandBlock commandBlock = new CommandBlock(mOwner, commandTypes.get(0));
                 mCanvasPane.getChildren().add(commandBlock);
                 commandBlock.relocateToPoint(point);
             }
