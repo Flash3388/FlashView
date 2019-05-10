@@ -6,6 +6,7 @@ import com.flash3388.flashview.commands.parameters.range.ValueRange;
 public interface CommandParameterType<T> {
 
     String getName();
+    String getMeasurementUnit();
     DataType<T> getValueType();
     ValueRange<T> getValueRange();
 }

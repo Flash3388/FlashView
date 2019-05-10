@@ -7,16 +7,23 @@ import com.flash3388.flashview.commands.parameters.range.ValueRange;
 public class IntegerParameterType implements CommandParameterType<Integer> {
 
     private final String mName;
+    private final String mMeasurementUnit;
     private final ValueRange<Integer> mValueRange;
 
-    public IntegerParameterType(String name, ValueRange<Integer> valueRange) {
+    public IntegerParameterType(String name, String measurementUnit, ValueRange<Integer> valueRange) {
         mName = name;
+        mMeasurementUnit = measurementUnit;
         mValueRange = valueRange;
     }
 
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public String getMeasurementUnit() {
+        return mMeasurementUnit;
     }
 
     @Override

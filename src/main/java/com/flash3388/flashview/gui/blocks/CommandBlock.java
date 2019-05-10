@@ -78,7 +78,7 @@ public class CommandBlock extends DraggableBlock {
             }
         });
 
-        box.getChildren().addAll(label, field);
+        box.getChildren().addAll(label, field, new Label(String.format("[%s]", parameter.getMeasurementUnit())));
 
         mParametersFields.put(parameter, field);
 
