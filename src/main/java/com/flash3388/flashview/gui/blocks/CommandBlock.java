@@ -93,7 +93,6 @@ public class CommandBlock extends DraggableBlock {
             String value = entry.getValue().getText();
 
             if (!isValidValue(type, value)) {
-                System.out.println("Not Valid");
                 return null;
             }
 

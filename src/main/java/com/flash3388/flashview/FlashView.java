@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 
 public class FlashView {
 
-    private static final boolean FORCE_FULL_SCREEN = false;
+    private static final boolean FORCE_FULL_SCREEN = true;
 
     private static final double WINDOW_WIDTH = 1000;
     private static final double WINDOW_HEIGHT = 800;

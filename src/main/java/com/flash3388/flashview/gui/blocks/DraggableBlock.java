@@ -109,8 +109,6 @@ public class DraggableBlock extends AnchorPane {
                 getParent().getParent().setOnDragOver(mContextDragOver);
                 getParent().getParent().setOnDragDropped(mContextDragDropped);
 
-                System.out.println("DDD");
-
                 mDragOffset = new Point2D(e.getX(), e.getY());
 
                 relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
@@ -201,7 +199,6 @@ public class DraggableBlock extends AnchorPane {
 
         anchorPane.setOnMouseEntered((e) -> {
             anchorPane.setStyle("-fx-background-color:#dae7f3;");
-            System.out.println("Hello");
         });
         anchorPane.setOnMouseExited((e) -> {
             anchorPane.setStyle("-fx-background-color:transparent;");
@@ -214,8 +211,6 @@ public class DraggableBlock extends AnchorPane {
         mContextDragOver = (e) -> {
             e.acceptTransferModes(TransferMode.ANY);
             relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
-
-            //System.out.println("Over");
 
             e.consume();
         };
@@ -253,8 +248,6 @@ public class DraggableBlock extends AnchorPane {
             mNodeLink.setVisible(false);
             mNodeLink.setStart(p);
 
-            System.out.println("Drag link: " + getId());
-
             ClipboardContent content = new ClipboardContent();
             LinkDragContainer dragContainer = new LinkDragContainer(getId());
             content.put(DragType.ADD_LINK, dragContainer);
@@ -275,8 +268,6 @@ public class DraggableBlock extends AnchorPane {
             if (dragContainer == null) {
                 return;
             }
-
-            System.out.println("Drag link dropped: " + getId());
 
             mNodeLink.setVisible(false);
             mParentPane.getChildren().remove(0);

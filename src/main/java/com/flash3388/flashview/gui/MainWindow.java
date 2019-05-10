@@ -121,8 +121,10 @@ public class MainWindow {
     private Node createControlsPane() {
         HBox box = new HBox();
         box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(0.0, 0.0, 5.0, 0.0));
 
         Button deploy = new Button("Deploy");
+        deploy.setPrefSize(100.0, 70.0);
         deploy.setOnAction((e) -> {
             Queue<Command> commands = collectCommands();
             JsonElement serialized = serializeCommands(commands);
@@ -222,8 +224,6 @@ public class MainWindow {
         mIconDragOverRoot = (e) -> {
             Point2D point = mCanvasPane.sceneToLocal(e.getSceneX(), e.getSceneY());
 
-            System.out.println("IconOver");
-
             if (!mCanvasPane.boundsInLocalProperty().get().contains(point)) {
                 e.acceptTransferModes(TransferMode.ANY);
                 mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
@@ -233,7 +233,6 @@ public class MainWindow {
         };
 
         mIconDragOverRightPane = (e) -> {
-            System.out.println("IconOverR");
             e.acceptTransferModes(TransferMode.ANY);
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
@@ -241,7 +240,6 @@ public class MainWindow {
         };
 
         mIconDragDropped = (e) -> {
-            System.out.println("IconOverD");
             IconDragContainer iconDragContainer = (IconDragContainer) e.getDragboard().getContent(DragType.ADD_NODE);
 
             if (iconDragContainer != null) {
@@ -305,7 +303,7 @@ public class MainWindow {
                         }
 
                         if (target.isConnectedToNode() && target.getConnectedNode().equals(source) || !target.isCanBeAttachedTo()) {
-                            System.out.println("Nope");
+
                         } else {
                             link.bindEnds(source, target);
                         }
