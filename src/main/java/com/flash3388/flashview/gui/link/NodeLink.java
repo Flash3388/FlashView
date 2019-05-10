@@ -83,12 +83,12 @@ public class NodeLink extends AnchorPane {
         mNodeLink.startXProperty().bind(
                 Bindings.add(source.layoutXProperty(), (source.getWidth())));
         mNodeLink.startYProperty().bind(
-                Bindings.add(source.layoutYProperty(), (source.getWidth() / 2.0)));
+                Bindings.add(source.layoutYProperty(), (source.getHeight() / 2.0)));
 
         mNodeLink.endXProperty().bind(
                 Bindings.add(target.layoutXProperty(), (0.0)));
         mNodeLink.endYProperty().bind(
-                Bindings.add(target.layoutYProperty(), (target.getWidth() / 2.0)));
+                Bindings.add(target.layoutYProperty(), (target.getHeight() / 2.0)));
 
         source.registerNextNode(target, this);
     }
