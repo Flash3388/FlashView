@@ -46,6 +46,12 @@ public class CommandTypeFactory {
                             .build(imageLoader),
                     new CommandTypeBuilder("HatchCapture", "Capture Hatch Panel")
                             .setIconPath("/hatch-in.png")
+                            .build(imageLoader),
+                    new CommandTypeBuilder("Stop", "Stop")
+                            .addParameter(new DoubleParameterType(
+                                    "WaitTime", "Seconds",
+                                    Ranges.doubleRange(0.0, 10.0)))
+                            .setIconPath("/stop.jpg")
                             .build(imageLoader)
             );
         } catch (IOException e) {
