@@ -43,6 +43,8 @@ import java.util.stream.Collectors;
 
 public class MainWindow {
 
+    private static final double DIVIDOR_POSITION = 0.25;
+
     private final double mWidth;
     private final double mHeight;
     private final List<CommandType> mCommandTypes;
@@ -75,7 +77,7 @@ public class MainWindow {
     }
 
     public Scene createScene() throws IOException {
-        mBasePane.setDividerPositions(0.2);
+        mBasePane.setDividerPositions(DIVIDOR_POSITION);
         mBasePane.setPrefSize(mWidth, mHeight);
         AnchorPane.setBottomAnchor(mBasePane, 0.0);
         AnchorPane.setLeftAnchor(mBasePane, 0.0);
@@ -105,8 +107,8 @@ public class MainWindow {
         leftPane.setBottom(createControlsPane());
 
         mBasePane.getItems().addAll(leftPane, canvasScroll);
-        leftPane.setMaxWidth(mWidth * 0.2);
-        leftPane.setMinWidth(mWidth  * 0.2);
+        leftPane.setMaxWidth(mWidth * DIVIDOR_POSITION);
+        leftPane.setMinWidth(mWidth  * DIVIDOR_POSITION);
 
         mRoot.getChildren().add(mBasePane);
 
