@@ -19,6 +19,8 @@ import java.util.concurrent.ExecutorService;
 
 public class FlashView {
 
+    private static final boolean FORCE_FULL_SCREEN = false;
+
     private static final double WINDOW_WIDTH = 1000;
     private static final double WINDOW_HEIGHT = 800;
 
@@ -56,6 +58,12 @@ public class FlashView {
                 } catch (IOException e) {
                     Platform.exit();
                 }
+
+                if (FORCE_FULL_SCREEN) {
+                    primaryStage.setFullScreen(true);
+                    primaryStage.setMaximized(true);
+                }
+
                 primaryStage.setOnCloseRequest(new WindowCloseRequest());
                 primaryStage.show();
 
