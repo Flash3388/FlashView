@@ -40,6 +40,12 @@ public class CommandTypeFactory {
                             .build(imageLoader),
                     new CommandTypeBuilder("BallIn")
                             .setIconPath("/ball-in.png")
+                            .build(imageLoader),
+                    new CommandTypeBuilder("HatchOut")
+                            .setIconPath("/hatch-out.png")
+                            .build(imageLoader),
+                    new CommandTypeBuilder("HatchIn")
+                            .setIconPath("/hatch-in.png")
                             .build(imageLoader)
             );
         } catch (IOException e) {
