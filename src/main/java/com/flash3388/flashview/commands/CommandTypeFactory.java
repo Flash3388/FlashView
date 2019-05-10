@@ -41,10 +41,10 @@ public class CommandTypeFactory {
                     new CommandTypeBuilder("CargoCapture", "Capture Cargo Ball")
                             .setIconPath("/ball-in.png")
                             .build(imageLoader),
-                    new CommandTypeBuilder("HatchRelease", "Release Hatch Panel")
+                    new CommandTypeBuilder("HatchRelease", "Place Hatch Panel")
                             .setIconPath("/hatch-out.png")
                             .build(imageLoader),
-                    new CommandTypeBuilder("HatchCapture", "Capture Hatch Panel")
+                    new CommandTypeBuilder("HatchCapture", "Take Hatch Panel")
                             .setIconPath("/hatch-in.png")
                             .build(imageLoader),
                     new CommandTypeBuilder("Stop", "Stop")
