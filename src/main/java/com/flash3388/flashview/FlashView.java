@@ -49,7 +49,7 @@ public class FlashView {
             CountDownLatch runLatch = new CountDownLatch(1);
 
             List<CommandType> commandTypes = CommandTypeFactory.createAll(mImageLoader);
-            final MainWindow mainWindow = new MainWindow(WINDOW_WIDTH, WINDOW_HEIGHT,
+            final MainWindow mainWindow = new MainWindow(primaryStage, WINDOW_WIDTH, WINDOW_HEIGHT,
                     commandTypes, mDeployer, mImageLoader);
 
             Platform.runLater(()-> {

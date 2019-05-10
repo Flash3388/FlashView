@@ -3,9 +3,11 @@ package com.flash3388.flashview.gui;
 import com.flash3388.flashview.commands.Command;
 import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.deploy.Deployer;
+import com.flash3388.flashview.deploy.DeploymentException;
 import com.flash3388.flashview.gui.blocks.CommandBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
 import com.flash3388.flashview.gui.blocks.StartBlock;
+import com.flash3388.flashview.gui.dialogs.Dialogs;
 import com.flash3388.flashview.gui.drag.DragType;
 import com.flash3388.flashview.gui.drag.IconDragContainer;
 import com.flash3388.flashview.gui.drag.LinkDragContainer;
@@ -15,6 +17,7 @@ import com.flash3388.flashview.gui.link.NodeLink;
 import com.flash3388.flashview.image.ImageLoader;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -34,6 +37,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.controlsfx.dialog.ExceptionDialog;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -50,6 +55,7 @@ public class MainWindow {
     private final List<CommandType> mCommandTypes;
     private final Deployer mDeployer;
 
+    private final Stage mOwner;
     private final AnchorPane mRoot;
     private final SplitPane mBasePane;
     private final ImageLoader mImageLoader;
@@ -65,7 +71,8 @@ public class MainWindow {
     private EventHandler<DragEvent> mIconDragDropped = null;
     private EventHandler<DragEvent> mIconDragOverRightPane = null;
 
-    public MainWindow(double width, double height, List<CommandType> commandTypes, Deployer deployer, ImageLoader imageLoader) {
+    public MainWindow(Stage owner, double width, double height, List<CommandType> commandTypes, Deployer deployer, ImageLoader imageLoader) {
+        mOwner = owner;
         mWidth = width;
         mHeight = height;
         mCommandTypes = commandTypes;
@@ -126,14 +133,27 @@ public class MainWindow {
         Button deploy = new Button("Deploy");
         deploy.setPrefSize(100.0, 70.0);
         deploy.setOnAction((e) -> {
+            deploy.setDisable(true);
+
             Queue<Command> commands = collectCommands();
             JsonElement serialized = serializeCommands(commands);
 
-            try {
-                mDeployer.deploy(serialized);
-            } catch (Exception e1) {
-                e1.printStackTrace();
-            }
+            Thread deploymentThread = new Thread(()-> {
+                try {
+                    mDeployer.deploy(serialized);
+                    Platform.runLater(()->
+                            Dialogs.showMessageDialog(mOwner, "Deployment Success",
+                                    "Script deployed successfully"));
+                } catch (DeploymentException e1) {
+                    e1.printStackTrace();
+                    Platform.runLater(()->
+                            Dialogs.showExceptionDialog(mOwner, "Deployment Failed", e1));
+                } finally {
+                    Platform.runLater(()-> deploy.setDisable(false));
+                }
+            }, "Deployment");
+
+            deploymentThread.start();
         });
 
         box.getChildren().add(deploy);
