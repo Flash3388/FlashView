@@ -21,7 +21,7 @@ public class ActionIcon extends DragIcon {
         HBox box = new HBox();
         box.setSpacing(1);
         box.setAlignment(Pos.CENTER_LEFT);
-        box.getChildren().addAll(imageView, new Label(mCommandType.getName()));
+        box.getChildren().addAll(imageView, new Label(mCommandType.getDisplayName()));
 
         getChildren().add(box);
     }

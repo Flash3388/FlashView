@@ -199,7 +199,7 @@ public class MainWindow {
 
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
-            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getCommandType().getName());
+            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getCommandType().getDisplayName());
 
             ClipboardContent content = new ClipboardContent();
             content.put(DragType.ADD_NODE, iconDragContainer);
@@ -267,7 +267,7 @@ public class MainWindow {
                 Point2D point = iconDragContainer.getDropCoordinates();
 
                 List<CommandType> commandTypes = mCommandTypes.stream()
-                        .filter((a) -> a.getName().equals(iconDragContainer.getName()))
+                        .filter((a) -> a.getDisplayName().equals(iconDragContainer.getName()))
                         .collect(Collectors.toList());
 
                 CommandBlock commandBlock = new CommandBlock(commandTypes.get(0));

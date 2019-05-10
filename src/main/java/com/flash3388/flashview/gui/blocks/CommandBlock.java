@@ -39,7 +39,7 @@ public class CommandBlock extends DraggableBlock {
 
         HBox title = new HBox();
         title.setAlignment(Pos.CENTER);
-        title.getChildren().add(new Label(mCommandType.getName()));
+        title.getChildren().add(new Label(mCommandType.getDisplayName()));
         totalRoot.getChildren().add(title);
 
         StackPane root = new StackPane();

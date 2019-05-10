@@ -8,6 +8,7 @@ import java.util.List;
 public interface CommandType {
 
     String getName();
+    String getDisplayName();
     List<CommandParameterType<?>> getParameters();
 
     Image getIcon();

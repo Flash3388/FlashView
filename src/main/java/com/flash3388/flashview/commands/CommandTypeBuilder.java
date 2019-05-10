@@ -11,11 +11,13 @@ import java.util.List;
 public class CommandTypeBuilder {
 
     private final String mName;
+    private final String mDisplayName;
     private final List<CommandParameterType<?>> mParameters;
     private String mIconPath;
 
-    public CommandTypeBuilder(String name) {
+    public CommandTypeBuilder(String name, String displayName) {
         mName = name;
+        mDisplayName = displayName;
 
         mParameters = new ArrayList<>();
         mIconPath = null;
@@ -33,6 +35,6 @@ public class CommandTypeBuilder {
 
     public CommandType build(ImageLoader imageLoader) throws IOException {
         Image image = imageLoader.loadFromResource(mIconPath);
-        return new GenericCommandType(mName, mParameters, image);
+        return new GenericCommandType(mName, mDisplayName, mParameters, image);
     }
 }

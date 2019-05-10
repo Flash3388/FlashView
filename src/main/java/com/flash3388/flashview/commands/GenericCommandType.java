@@ -9,11 +9,13 @@ import java.util.List;
 public class GenericCommandType implements CommandType {
 
     private final String mName;
+    private final String mDisplayName;
     private final List<CommandParameterType<?>> mParameters;
     private final Image mIcon;
 
-    public GenericCommandType(String name, List<CommandParameterType<?>> parameters, Image icon) {
+    public GenericCommandType(String name, String displayName, List<CommandParameterType<?>> parameters, Image icon) {
         mName = name;
+        mDisplayName = displayName;
         mParameters = Collections.unmodifiableList(parameters);
         mIcon = icon;
     }
@@ -21,6 +23,11 @@ public class GenericCommandType implements CommandType {
     @Override
     public String getName() {
         return mName;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return mDisplayName;
     }
 
     @Override
