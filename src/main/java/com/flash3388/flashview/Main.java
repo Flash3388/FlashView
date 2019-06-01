@@ -28,7 +28,6 @@ public class Main {
                 .enableFileLogging(true)
                 .build();
 
-        System.out.println(CONFIGURATION_FILE.getAbsolutePath());
         Configuration configuration;
         try (InputStream inputStream = new FileInputStream(CONFIGURATION_FILE)) {
             configuration = new JsonConfigurationLoader(new Gson()).load(inputStream);
