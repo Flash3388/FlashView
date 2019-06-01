@@ -51,9 +51,13 @@ task copyExternalDependenciesIntoRelease(type: Copy) {
     into releaseFolder
 }
 
+task deleteOriginalJar(type: Delete) {
+    delete jar.archivePath
+}
+
 task buildDistribution {
-    dependsOn copyJarIntoRelease
+    dependsOn copyJarIntoRelease, deleteOriginalJar
     dependsOn copyExternalDependenciesIntoRelease
 }
 
-build.finalizedBy(buildDistribution)
+build.finalizedBy buildDistribution
