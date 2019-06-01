@@ -3,6 +3,7 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 def releaseFolder = new File(project.buildDir, 'flashview')
+def distFolder = file('dist')
 
 repositories {
     mavenCentral()
@@ -57,9 +58,15 @@ task deleteOriginalJar(type: Delete) {
     delete jar.archivePath
 }
 
+task copyDistribution(type: Copy) {
+    from fileTree(distFolder)
+    into releaseFolder
+}
+
 task buildDistribution {
     dependsOn copyJarIntoRelease, deleteOriginalJar
     dependsOn copyExternalDependenciesIntoRelease
+    dependsOn copyDistribution
 }
 
 build.finalizedBy buildDistribution
