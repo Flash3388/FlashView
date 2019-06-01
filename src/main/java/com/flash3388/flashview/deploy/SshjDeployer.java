@@ -15,12 +15,12 @@ import java.util.Collections;
 public class SshjDeployer implements Deployer {
 
     private final Remote mRemote;
-    private final File mDestinationFile;
+    private final Destination mDestination;
     private final Logger mLogger;
 
-    public SshjDeployer(Remote remote, File destinationFile, Logger logger) {
+    public SshjDeployer(Remote remote, Destination destination, Logger logger) {
         mRemote = remote;
-        mDestinationFile = destinationFile;
+        mDestination = destination;
         mLogger = logger;
     }
 
@@ -42,7 +42,7 @@ public class SshjDeployer implements Deployer {
 
                 client.newSCPFileTransfer().upload(
                         new FileSystemFile(temp.getAbsolutePath()),
-                        mDestinationFile.getPath().replace('\\', '/'));
+                        mDestination.getPath());
             } finally {
                 client.disconnect();
             }

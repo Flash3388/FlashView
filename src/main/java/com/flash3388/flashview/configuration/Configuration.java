@@ -1,5 +1,6 @@
 package com.flash3388.flashview.configuration;
 
+import com.flash3388.flashview.deploy.Destination;
 import com.flash3388.flashview.deploy.Remote;
 
 import java.io.File;
@@ -7,9 +8,9 @@ import java.io.File;
 public class Configuration {
 
     private final Remote mRemote;
-    private final File mDeploymentDestination;
+    private final Destination mDeploymentDestination;
 
-    public Configuration(Remote remote, File deploymentDestination) {
+    public Configuration(Remote remote, Destination deploymentDestination) {
         mRemote = remote;
         mDeploymentDestination = deploymentDestination;
     }
@@ -18,7 +19,7 @@ public class Configuration {
         return mRemote;
     }
 
-    public File getDeploymentDestination() {
+    public Destination getDeploymentDestination() {
         return mDeploymentDestination;
     }
 }

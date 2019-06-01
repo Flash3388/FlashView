@@ -1,6 +1,7 @@
 package com.flash3388.flashview.configuration.loader;
 
 import com.flash3388.flashview.configuration.Configuration;
+import com.flash3388.flashview.deploy.Destination;
 import com.flash3388.flashview.deploy.Remote;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -27,14 +28,14 @@ public class JsonConfigurationLoader implements ConfigurationLoader {
             reader.beginObject();
             try {
                 Remote remote = null;
-                File destination = null;
+                Destination destination = null;
 
                 while (reader.hasNext()) {
                     String name = reader.nextName();
                     if (name.equalsIgnoreCase("remote")) {
                         remote = parseRemote(reader);
                     } else if (name.equalsIgnoreCase("destination")) {
-                        destination = parseDestinationFile(reader);
+                        destination = parseDestination(reader);
                     } else {
                         continue;
                     }
@@ -78,7 +79,7 @@ public class JsonConfigurationLoader implements ConfigurationLoader {
                 hostname);
     }
 
-    private File parseDestinationFile(JsonReader reader) throws IOException {
+    private Destination parseDestination(JsonReader reader) throws IOException {
         reader.beginObject();
         try {
             Map<String, String> map = readerToMap(reader);
@@ -88,14 +89,14 @@ public class JsonConfigurationLoader implements ConfigurationLoader {
         }
     }
 
-    private File parseDestinationFromPath(Map<String, String> map) throws IOException {
+    private Destination parseDestinationFromPath(Map<String, String> map) throws IOException {
         String path = map.get("path");
 
         if (path == null) {
             throw new IOException("path attributes missing");
         }
 
-        return new File(path);
+        return new Destination(path);
     }
 
     private Map<String, String> readerToMap(JsonReader reader) throws IOException {
