@@ -143,10 +143,10 @@ public class MainWindow {
                     Platform.runLater(()->
                             Dialogs.showMessageDialog(mOwner, "Deployment Success",
                                     "Script deployed successfully"));
-                } catch (DeploymentException e1) {
-                    e1.printStackTrace();
+                } catch (Throwable t) {
+                    t.printStackTrace();
                     Platform.runLater(()->
-                            Dialogs.showExceptionDialog(mOwner, "Deployment Failed", e1));
+                            Dialogs.showExceptionDialog(mOwner, "Deployment Failed", t));
                 } finally {
                     Platform.runLater(()-> deploy.setDisable(false));
                 }
