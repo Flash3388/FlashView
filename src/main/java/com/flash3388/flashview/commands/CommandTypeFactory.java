@@ -20,7 +20,7 @@ public class CommandTypeFactory {
                     new CommandTypeBuilder("Drive", "Move Distance")
                             .addParameter(new DoubleParameterType(
                                     "Distance", "CM",
-                                    Ranges.doubleRange(-100.0, 100.0)))
+                                    Ranges.doubleRange(-1000.0, 1000.0)))
                             .setIconPath("/MoveDistance.jpg")
                             .build(imageLoader),
                     new CommandTypeBuilder("Rotate", "Rotate Degrees")
