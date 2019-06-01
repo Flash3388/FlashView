@@ -28,7 +28,7 @@ public class Main {
 
         Deployer deployer = new SshjDeployer(
                 new Remote("admin", "", "roborio-3388-frc.local"),
-                new File("/home/lvuser/SweetJesus.fv"));
+                new File("/home/lvuser/SweetJesus.fv"), logger);
 
         ImageLoader imageLoader = new ImageLoader();
 

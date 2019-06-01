@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import net.schmizz.sshj.xfer.FileSystemFile;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,17 +16,19 @@ public class SshjDeployer implements Deployer {
 
     private final Remote mRemote;
     private final File mDestinationFile;
+    private final Logger mLogger;
 
-    public SshjDeployer(Remote remote, File destinationFile) {
+    public SshjDeployer(Remote remote, File destinationFile, Logger logger) {
         mRemote = remote;
         mDestinationFile = destinationFile;
+        mLogger = logger;
     }
 
     @Override
     public void deploy(JsonElement data) throws DeploymentException {
         try {
             SSHClient client = new SSHClient();
-            client.loadKnownHosts();
+            tryLoadKnownHosts(client);
             client.addHostKeyVerifier(new PromiscuousVerifier());
 
             client.connect(mRemote.getHostname());
@@ -43,6 +46,15 @@ public class SshjDeployer implements Deployer {
             }
         } catch (IOException e) {
             throw new DeploymentException(e);
+        }
+    }
+
+    private void tryLoadKnownHosts(SSHClient client) {
+        try {
+            client.loadKnownHosts();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mLogger.warn("Unable to load known_hosts", e);
         }
     }
 }
