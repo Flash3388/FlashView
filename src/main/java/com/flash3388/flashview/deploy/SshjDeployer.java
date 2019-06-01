@@ -40,7 +40,9 @@ public class SshjDeployer implements Deployer {
                 File temp = File.createTempFile("deploy", "flashview");
                 Files.write(temp.toPath(), Collections.singleton(data.toString()), new StandardOpenOption[]{StandardOpenOption.WRITE});
 
-                client.newSCPFileTransfer().upload(new FileSystemFile(temp.getAbsolutePath()), mDestinationFile.getPath());
+                client.newSCPFileTransfer().upload(
+                        new FileSystemFile(temp.getAbsolutePath()),
+                        mDestinationFile.getPath().replace('\\', '/'));
             } finally {
                 client.disconnect();
             }
