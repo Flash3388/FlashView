@@ -40,7 +40,7 @@ jar {
         attributes 'Main-Class': 'com.flash3388.flashview.Main'
         attributes 'Class-Path': configurations.compileExternal.collect {
             it.name
-        }.join(',')
+        }.join(' ')
     }
 }
 
