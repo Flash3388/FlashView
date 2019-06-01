@@ -17,6 +17,7 @@ import com.flash3388.flashview.gui.link.NodeLink;
 import com.flash3388.flashview.image.ImageLoader;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.stream.JsonWriter;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -37,9 +38,15 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Queue;
@@ -155,7 +162,29 @@ public class MainWindow {
             deploymentThread.start();
         });
 
-        box.getChildren().add(deploy);
+        Button export = new Button("Export");
+        export.setPrefSize(100.0, 70.0);
+        export.setOnAction((e) -> {
+            FileChooser fileChooser = new FileChooser();
+            File outputFile = fileChooser.showSaveDialog(mOwner);
+            if (outputFile == null) {
+                return;
+            }
+
+            Queue<Command> commands = collectCommands();
+            JsonElement serialized = serializeCommands(commands);
+            try (OutputStream outputStream = new FileOutputStream(outputFile);
+                 Writer writer = new OutputStreamWriter(outputStream)) {
+                writer.write(serialized.toString());
+            } catch (Throwable t) {
+                t.printStackTrace();
+                Platform.runLater(()->
+                        Dialogs.showExceptionDialog(mOwner, "Export Failed", t));
+            }
+        });
+
+        box.setSpacing(5.0);
+        box.getChildren().addAll(deploy, export);
 
         return box;
     }
