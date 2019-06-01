@@ -37,7 +37,9 @@ jar {
 
     manifest {
         attributes 'Main-Class': 'com.flash3388.flashview.Main'
-        attributes 'Class-Path': configurations.compileExternal.collect().join(' ')
+        attributes 'Class-Path': configurations.compileExternal.collect {
+            it.name
+        }.join(',')
     }
 }
 
