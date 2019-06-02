@@ -23,7 +23,7 @@ public class Main {
 
     private static final File CONFIGURATION_FILE = new File("config.json");
 
-    public static void main(String[] args) throws IOException, InitializationException, ConfigurationLoadException {
+    public static void main(String[] args) throws IOException, InitializationException, ConfigurationLoadExceptiong {
         Logger logger = new LoggerBuilder("flashview")
                 .enableFileLogging(true)
                 .build();

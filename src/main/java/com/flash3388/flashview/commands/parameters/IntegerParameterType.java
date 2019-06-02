@@ -28,7 +28,7 @@ public class IntegerParameterType implements CommandParameterType<Integer> {
 
     @Override
     public DataType<Integer> getValueType() {
-        return DataTypes.INTEGER;
+        return DataTypes.INTEGER.getDataType();
     }
 
     @Override

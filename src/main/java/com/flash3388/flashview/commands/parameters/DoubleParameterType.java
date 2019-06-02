@@ -28,7 +28,7 @@ public class DoubleParameterType implements CommandParameterType<Double> {
 
     @Override
     public DataType<Double> getValueType() {
-        return DataTypes.DOUBLE;
+        return DataTypes.DOUBLE.getDataType();
     }
 
     @Override
