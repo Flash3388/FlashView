@@ -46,7 +46,7 @@ dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
 
-    compile group: 'com.flash3388.flashlib', name: 'flashlib-frc', version: '2019.1.0-alpha.7-SNAPSHOT'
+    compile group: 'com.flash3388.flashlib', name: 'flashlib-frc', version: '2019.1.0-beta.2'
 
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)

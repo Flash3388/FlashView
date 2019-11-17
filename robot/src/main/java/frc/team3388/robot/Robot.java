@@ -7,20 +7,27 @@ import com.flash3388.flashlib.robot.hid.scheduling.HidScheduling;
 import com.flash3388.flashlib.robot.hid.xbox.XboxButton;
 import com.flash3388.flashlib.robot.hid.xbox.XboxController;
 import com.flash3388.flashlib.time.Time;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.team3388.EncoderSRX;
 import frc.team3388.Piston;
 import frc.team3388.RaspberryPi.VisionProcessing.VisionProcessingUnit;
-import frc.team3388.RaspberryPi.ntp.NtpServer;
 import frc.team3388.Switch;
 import frc.team3388.actions.Edward;
 import frc.team3388.actions.ManualLift;
-import frc.team3388.flashview.*;
-import frc.team3388.flashview.CommandTypes.*;
+import frc.team3388.flashview.CommandTypes.CargoCapture;
+import frc.team3388.flashview.CommandTypes.CargoRelease;
+import frc.team3388.flashview.CommandTypes.Drive;
+import frc.team3388.flashview.CommandTypes.HatchCapture;
+import frc.team3388.flashview.CommandTypes.HatchRelease;
+import frc.team3388.flashview.CommandTypes.LiftDown;
+import frc.team3388.flashview.CommandTypes.LiftUp;
+import frc.team3388.flashview.CommandTypes.Rotate;
+import frc.team3388.flashview.CommandTypes.Stop;
+import frc.team3388.flashview.CommandTypes.Test;
+import frc.team3388.flashview.Interpreter;
+import frc.team3388.flashview.ProgramReader;
 import frc.team3388.subsystems.CargoSystem;
 import frc.team3388.subsystems.DriveSystem;
 import frc.team3388.subsystems.HatchSystem;
@@ -154,8 +161,8 @@ public class Robot extends TimedFrcRobot {
     }
 
     private void setupControllers() {
-        xbox = new XboxController(getHidInterface(),RobotMap.XBOX_PORT);
-        HidScheduling.addButtonsUpdateTaskToScheduler(xbox, getScheduler());
+        xbox = new XboxController(RobotMap.XBOX_PORT);
+        HidScheduling.addButtonsUpdateTaskToScheduler(xbox);
 
         liftSystem.setDefaultAction(new ManualLift(liftSystem,xbox));
         xbox.getButton(XboxButton.A).whenActive(new Edward(hatchSystem));

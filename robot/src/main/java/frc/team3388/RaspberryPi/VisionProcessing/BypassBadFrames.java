@@ -1,6 +1,6 @@
 package frc.team3388.RaspberryPi.VisionProcessing;
 
-import com.flash3388.flashlib.robot.scheduling.Action;
+import com.flash3388.flashlib.robot.scheduling.actions.Action;
 import frc.team3388.subsystems.DriveSystem;
 
 public class BypassBadFrames extends Action {

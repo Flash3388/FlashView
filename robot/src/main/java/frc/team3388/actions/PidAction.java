@@ -1,7 +1,7 @@
 package frc.team3388.actions;
 
 import com.flash3388.flashlib.robot.control.PidController;
-import com.flash3388.flashlib.robot.scheduling.Action;
+import com.flash3388.flashlib.robot.scheduling.actions.Action;
 import com.flash3388.flashlib.robot.scheduling.Subsystem;
 import com.flash3388.flashlib.time.Clock;
 import com.flash3388.flashlib.time.Time;

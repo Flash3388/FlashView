@@ -1,6 +1,6 @@
 package frc.team3388.flashview.CommandTypes;
 
-import com.flash3388.flashlib.robot.scheduling.Action;
+import com.flash3388.flashlib.robot.scheduling.actions.Action;
 import com.flash3388.flashlib.robot.scheduling.actions.Actions;
 import com.flash3388.flashlib.robot.scheduling.actions.InstantAction;
 import com.flash3388.flashlib.time.Time;

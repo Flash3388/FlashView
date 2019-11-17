@@ -32,10 +32,10 @@ public class NtpServer {
             return;
         }
 
-        long receiveTimestamp = mClock.currentTime().getAsMillis();
+        long receiveTimestamp = mClock.currentTime().valueAsMillis();
         mServerRecTimeEntry.setDouble(receiveTimestamp);
 
-        long sendTimestamp = mClock.currentTime().getAsMillis();
+        long sendTimestamp = mClock.currentTime().valueAsMillis();
         mServerSendTimeEntry.setDouble(sendTimestamp);
 
         mClientEntry.setBoolean(false);

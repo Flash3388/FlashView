@@ -1,6 +1,6 @@
 package frc.team3388.actions;
 
-import com.flash3388.flashlib.robot.scheduling.Action;
+import com.flash3388.flashlib.robot.scheduling.actions.Action;
 import frc.team3388.subsystems.DriveSystem;
 
 public abstract class DriveUntil extends Action {

@@ -1,7 +1,7 @@
 package frc.team3388.flashview;
 
-import com.flash3388.flashlib.robot.scheduling.ActionGroup;
-import com.flash3388.flashlib.robot.scheduling.ExecutionOrder;
+import com.flash3388.flashlib.robot.scheduling.actions.Action;
+import com.flash3388.flashlib.robot.scheduling.actions.SequentialActionGroup;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -20,8 +20,8 @@ public class Interpreter {
         this.commandTypes = commandTypes;
     }
 
-    public ActionGroup generateProgram(BufferedReader jsonString) throws IOException {
-        ActionGroup actionGroup = new ActionGroup(ExecutionOrder.SEQUENTIAL);
+    public Action generateProgram(BufferedReader jsonString) throws IOException {
+        SequentialActionGroup actionGroup = new SequentialActionGroup();
         JsonArray jsonArray = toJsonArray(jsonString);
         jsonString.close();
 
