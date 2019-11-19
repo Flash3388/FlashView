@@ -1,6 +1,6 @@
 apply plugin: 'java'
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
 
 def releaseFolder = new File(project.buildDir, 'flashview')
 def distFolder = file('dist')
@@ -26,9 +26,9 @@ dependencies {
 }
 
 jar {
-    baseName 'flashview'
-    archiveName = "${baseName}.${extension}"
-    destinationDir = project.buildDir
+    archiveBaseName.set('flashview')
+    archiveFileName.set("${archiveBaseName.get()}.${archiveExtension.get()}")
+    destinationDirectory.set(project.buildDir)
 
     from {
         (configurations.compile - configurations.compileExternal).collect {
@@ -45,7 +45,7 @@ jar {
 }
 
 task copyJarIntoRelease(type: Copy) {
-    from jar.archivePath
+    from jar.archiveFile.get()
     into releaseFolder
 }
 
@@ -55,7 +55,7 @@ task copyExternalDependenciesIntoRelease(type: Copy) {
 }
 
 task deleteOriginalJar(type: Delete) {
-    delete jar.archivePath
+    delete jar.archiveFile.get()
 }
 
 task copyDistribution(type: Copy) {
