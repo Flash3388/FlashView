@@ -1,1 +1,4 @@
-include ':ui', ':robot'
+
+include ':library'
+include ':ui'
+include ':runner'

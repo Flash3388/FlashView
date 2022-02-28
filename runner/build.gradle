@@ -1,9 +1,9 @@
 plugins {
-    id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id "java-library"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
+
 
 repositories {
     mavenCentral()
@@ -11,12 +11,6 @@ repositories {
 
 dependencies {
     implementation project(':library')
-
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.5'
-    implementation group: 'com.github.tomtzook', name: 'castle', version: '2.0.0-beta.3'
-    implementation group: 'com.github.tomtzook', name: 'jmath', version: '1.1.0'
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.1'
-    implementation group: 'net.sourceforge.argparse4j', name: 'argparse4j', version: '0.8.1'
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.4.2'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.4.2'
@@ -37,19 +31,19 @@ test {
 }
 
 jar {
-
+    archiveBaseName.set(project.name)
 }
 
-javafx {
-    version = '11'
-    modules = [ 'javafx.controls' ]
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('sources')
+
+    from sourceSets.main.allSource
 }
 
-application {
-    mainClassName = 'com.flash3388.flashview.Main'
-    applicationName = 'flashview'
-}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveBaseName.set(project.name)
+    archiveClassifier.set('javadoc')
 
-run {
-    args '--debug', '--nofiles'
+    from javadoc.destinationDir
 }

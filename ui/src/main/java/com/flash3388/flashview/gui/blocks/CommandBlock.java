@@ -1,10 +1,10 @@
 package com.flash3388.flashview.gui.blocks;
 
 import com.flash3388.flashview.commands.Command;
+import com.flash3388.flashview.commands.ViewableCommandType;
 import com.flash3388.flashview.commands.data.DataType;
 import com.flash3388.flashview.commands.parameters.CommandParameter;
-import com.flash3388.flashview.commands.parameters.CommandParameterType;
-import com.flash3388.flashview.commands.CommandType;
+import com.flash3388.flashview.commands.parameters.CommandParameterValue;
 import com.flash3388.flashview.commands.parameters.range.ValueRange;
 import com.flash3388.flashview.gui.dialogs.Dialogs;
 import javafx.geometry.Pos;
@@ -26,10 +26,10 @@ import java.util.Optional;
 public class CommandBlock extends DraggableBlock {
 
     private final Stage mOwner;
-    private final CommandType mCommandType;
-    private final Map<CommandParameterType<?>, TextField> mParametersFields;
+    private final ViewableCommandType mCommandType;
+    private final Map<CommandParameter<?>, TextField> mParametersFields;
 
-    public CommandBlock(Stage owner, CommandType commandType) {
+    public CommandBlock(Stage owner, ViewableCommandType commandType) {
         mOwner = owner;
         mCommandType = commandType;
         mParametersFields = new HashMap<>();
@@ -43,7 +43,7 @@ public class CommandBlock extends DraggableBlock {
 
         HBox title = new HBox();
         title.setAlignment(Pos.CENTER);
-        title.getChildren().add(new Label(mCommandType.getDisplayName()));
+        title.getChildren().add(new Label(mCommandType.getName()));
         totalRoot.getChildren().add(title);
 
         StackPane root = new StackPane();
@@ -57,9 +57,9 @@ public class CommandBlock extends DraggableBlock {
 
         root.getChildren().add(imageView);
 
-        List<CommandParameterType<?>> parameters = mCommandType.getParameters();
+        List<CommandParameter<?>> parameters = mCommandType.getParameters();
         VBox parametersBox = new VBox();
-        for (CommandParameterType<?> parameter : parameters) {
+        for (CommandParameter<?> parameter : parameters) {
             parametersBox.getChildren().add(createForParameter(parameter));
         }
 
@@ -68,7 +68,7 @@ public class CommandBlock extends DraggableBlock {
         addData(totalRoot);
     }
 
-    private <T> Node createForParameter(CommandParameterType<T> parameter) {
+    private <T> Node createForParameter(CommandParameter<T> parameter) {
         HBox box = new HBox();
         box.setSpacing(1);
 
@@ -93,24 +93,24 @@ public class CommandBlock extends DraggableBlock {
     }
 
     public Command toCommand() {
-        List<CommandParameter<?>> parameters = new ArrayList<>();
+        List<CommandParameterValue<?>> parameters = new ArrayList<>();
 
-        for (Map.Entry<CommandParameterType<?>, TextField> entry : mParametersFields.entrySet()) {
-            CommandParameterType<?> type = entry.getKey();
+        for (Map.Entry<CommandParameter<?>, TextField> entry : mParametersFields.entrySet()) {
+            CommandParameter<?> type = entry.getKey();
             String value = entry.getValue().getText();
 
             if (!isValidValue(type, value)) {
                 return null;
             }
 
-            CommandParameter<?> parameter = createParameter(type, value);
+            CommandParameterValue<?> parameter = createParameter(type, value);
             parameters.add(parameter);
         }
 
         return new Command(mCommandType, parameters);
     }
 
-    private <T> boolean isValidValue(CommandParameterType<T> parameter, String value) {
+    private <T> boolean isValidValue(CommandParameter<T> parameter, String value) {
         DataType<T> type = parameter.getValueType();
         Optional<T> optional = type.tryConvert(value);
 
@@ -119,8 +119,8 @@ public class CommandBlock extends DraggableBlock {
         return optional.isPresent() && valueRange.isInRange(optional.get());
     }
 
-    private <T> CommandParameter<T> createParameter(CommandParameterType<T> type, String value) {
+    private <T> CommandParameterValue<T> createParameter(CommandParameter<T> type, String value) {
         Optional<T> convertedType = type.getValueType().tryConvert(value);
-        return new CommandParameter<>(type, convertedType.get());
+        return new CommandParameterValue<>(type, convertedType.get());
     }
 }

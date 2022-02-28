@@ -1,6 +1,6 @@
 package com.flash3388.flashview.commands;
 
-import com.flash3388.flashview.commands.parameters.CommandParameter;
+import com.flash3388.flashview.commands.parameters.CommandParameterValue;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -10,9 +10,9 @@ import java.util.List;
 public class Command {
 
     private final CommandType mCommandType;
-    private final List<CommandParameter<?>> mParameters;
+    private final List<CommandParameterValue<?>> mParameters;
 
-    public Command(CommandType commandType, List<CommandParameter<?>> parameters) {
+    public Command(CommandType commandType, List<CommandParameterValue<?>> parameters) {
         mCommandType = commandType;
         mParameters = Collections.unmodifiableList(parameters);
     }
@@ -21,7 +21,7 @@ public class Command {
         return mCommandType;
     }
 
-    public List<CommandParameter<?>> getParameters() {
+    public List<CommandParameterValue<?>> getParameters() {
         return mParameters;
     }
 
@@ -30,7 +30,7 @@ public class Command {
         object.add("type", new JsonPrimitive(mCommandType.getName()));
 
         JsonObject parameters = new JsonObject();
-        for (CommandParameter<?> parameter : mParameters) {
+        for (CommandParameterValue<?> parameter : mParameters) {
             parameters.add(parameter.getParameterType().getName(), new JsonPrimitive(parameter.getValue().toString()));
         }
 

@@ -2,8 +2,8 @@ package com.flash3388.flashview.gui;
 
 import com.flash3388.flashview.commands.Command;
 import com.flash3388.flashview.commands.CommandType;
+import com.flash3388.flashview.commands.ViewableCommandType;
 import com.flash3388.flashview.deploy.Deployer;
-import com.flash3388.flashview.deploy.DeploymentException;
 import com.flash3388.flashview.gui.blocks.CommandBlock;
 import com.flash3388.flashview.gui.blocks.DraggableBlock;
 import com.flash3388.flashview.gui.blocks.StartBlock;
@@ -17,7 +17,6 @@ import com.flash3388.flashview.gui.link.NodeLink;
 import com.flash3388.flashview.image.ImageLoader;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.stream.JsonWriter;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -58,7 +57,7 @@ public class MainWindow {
 
     private final double mWidth;
     private final double mHeight;
-    private final List<CommandType> mCommandTypes;
+    private final List<ViewableCommandType> mCommandTypes;
     private final Deployer mDeployer;
 
     private final Stage mOwner;
@@ -77,7 +76,7 @@ public class MainWindow {
     private EventHandler<DragEvent> mIconDragDropped = null;
     private EventHandler<DragEvent> mIconDragOverRightPane = null;
 
-    public MainWindow(Stage owner, double width, double height, List<CommandType> commandTypes, Deployer deployer, ImageLoader imageLoader) {
+    public MainWindow(Stage owner, double width, double height, List<ViewableCommandType> commandTypes, Deployer deployer, ImageLoader imageLoader) {
         mOwner = owner;
         mWidth = width;
         mHeight = height;
@@ -231,7 +230,7 @@ public class MainWindow {
         content.setSpacing(10.0);
         scrollPane.setContent(content);
 
-        for (CommandType commandType : mCommandTypes) {
+        for (ViewableCommandType commandType : mCommandTypes) {
             ActionIcon actionIcon = new ActionIcon(commandType);
             addDragDetection(actionIcon);
 
@@ -251,7 +250,7 @@ public class MainWindow {
 
             mDragItem.relocateToPoint(new Point2D(e.getSceneX(), e.getSceneY()));
 
-            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getCommandType().getDisplayName());
+            IconDragContainer iconDragContainer = new IconDragContainer(dragIcon.getCommandType().getName());
 
             ClipboardContent content = new ClipboardContent();
             content.put(DragType.ADD_NODE, iconDragContainer);
@@ -314,8 +313,8 @@ public class MainWindow {
             if (iconDragContainer != null) {
                 Point2D point = iconDragContainer.getDropCoordinates();
 
-                List<CommandType> commandTypes = mCommandTypes.stream()
-                        .filter((a) -> a.getDisplayName().equals(iconDragContainer.getName()))
+                List<ViewableCommandType> commandTypes = mCommandTypes.stream()
+                        .filter((a) -> a.getName().equals(iconDragContainer.getName()))
                         .collect(Collectors.toList());
 
                 CommandBlock commandBlock = new CommandBlock(mOwner, commandTypes.get(0));
