@@ -24,18 +24,4 @@ public class Command {
     public List<CommandParameterValue<?>> getParameters() {
         return mParameters;
     }
-
-    public JsonObject toJson() {
-        JsonObject object = new JsonObject();
-        object.add("type", new JsonPrimitive(mCommandType.getName()));
-
-        JsonObject parameters = new JsonObject();
-        for (CommandParameterValue<?> parameter : mParameters) {
-            parameters.add(parameter.getParameterType().getName(), new JsonPrimitive(parameter.getValue().toString()));
-        }
-
-        object.add("parameters", parameters);
-
-        return object;
-    }
 }

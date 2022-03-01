@@ -1,7 +1,7 @@
 package com.flash3388.flashview.gui;
 
+import com.flash3388.flashview.Program;
 import com.flash3388.flashview.commands.Command;
-import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.commands.ViewableCommandType;
 import com.flash3388.flashview.deploy.Deployer;
 import com.flash3388.flashview.gui.blocks.CommandBlock;
@@ -15,7 +15,8 @@ import com.flash3388.flashview.gui.icons.ActionIcon;
 import com.flash3388.flashview.gui.icons.DragIcon;
 import com.flash3388.flashview.gui.link.NodeLink;
 import com.flash3388.flashview.image.ImageLoader;
-import com.google.gson.JsonArray;
+import com.flash3388.flashview.io.JsonProgramSaver;
+import com.flash3388.flashview.io.ProgramSaver;
 import com.google.gson.JsonElement;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -41,12 +42,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
@@ -140,12 +138,9 @@ public class MainWindow {
         deploy.setOnAction((e) -> {
             deploy.setDisable(true);
 
-            Queue<Command> commands = collectCommands();
-            JsonElement serialized = serializeCommands(commands);
-
             Thread deploymentThread = new Thread(()-> {
                 try {
-                    mDeployer.deploy(serialized);
+                    //mDeployer.deploy(serialized);
                     Platform.runLater(()->
                             Dialogs.showMessageDialog(mOwner, "Deployment Success",
                                     "Script deployed successfully"));
@@ -160,6 +155,7 @@ public class MainWindow {
 
             deploymentThread.start();
         });
+        deploy.setDisable(true);
 
         Button export = new Button("Export");
         export.setPrefSize(100.0, 70.0);
@@ -170,11 +166,10 @@ public class MainWindow {
                 return;
             }
 
-            Queue<Command> commands = collectCommands();
-            JsonElement serialized = serializeCommands(commands);
-            try (OutputStream outputStream = new FileOutputStream(outputFile);
-                 Writer writer = new OutputStreamWriter(outputStream)) {
-                writer.write(serialized.toString());
+            Program program = collectCommands();
+            ProgramSaver programSaver = new JsonProgramSaver();
+            try {
+                programSaver.save(program, outputFile.toPath());
             } catch (Throwable t) {
                 t.printStackTrace();
                 Platform.runLater(()->
@@ -188,7 +183,7 @@ public class MainWindow {
         return box;
     }
 
-    private Queue<Command> collectCommands() {
+    private Program collectCommands() {
         Queue<Command> commands = new ArrayDeque<>();
 
         DraggableBlock draggableBlock = mStartBlock;
@@ -201,17 +196,7 @@ public class MainWindow {
             }
         }
 
-        return commands;
-    }
-
-    private JsonElement serializeCommands(Queue<Command> commands) {
-        JsonArray commandsArray = new JsonArray();
-
-        for(Command command : commands) {
-            commandsArray.add(command.toJson());
-        }
-
-        return commandsArray;
+        return new Program(new ArrayList<>(commands));
     }
 
     private Pane createCanvas() {
