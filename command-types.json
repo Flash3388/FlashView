@@ -19,15 +19,15 @@
   },
   {
     "id": "rotate",
-    "name": "Rotate To Angle",
+    "name": "Rotate By",
     "params": [
       {
         "name": "Angle",
         "measurementUnit": "degrees",
         "type": "DOUBLE",
         "range": {
-          "min": 0,
-          "max": 360
+          "min": -180,
+          "max": 180
         }
       }
     ],
