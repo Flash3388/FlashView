@@ -48,6 +48,7 @@ javafx {
 application {
     mainClassName = 'com.flash3388.flashview.Main'
     applicationName = 'flashview'
+    applicationDefaultJvmArgs = ['-Djdk.gtk.version=2']
 }
 
 run {

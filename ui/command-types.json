@@ -1,7 +1,7 @@
 [
   {
-    "id": "test",
-    "name": "test",
+    "id": "move",
+    "name": "MoveDistance",
     "params": [
       {
         "name": "distance",
@@ -14,7 +14,25 @@
       }
     ],
     "additionalProperties": {
-      "iconPath": "/ball-in.png"
+      "iconPath": "/move.png"
+    }
+  },
+  {
+    "id": "rotate",
+    "name": "Rotate To Angle",
+    "params": [
+      {
+        "name": "Angle",
+        "measurementUnit": "degrees",
+        "type": "DOUBLE",
+        "range": {
+          "min": 0,
+          "max": 360
+        }
+      }
+    ],
+    "additionalProperties": {
+      "iconPath": "/rotate.png"
     }
   }
 ]
