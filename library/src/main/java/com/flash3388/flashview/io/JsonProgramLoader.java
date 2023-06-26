@@ -7,7 +7,6 @@ import com.flash3388.flashview.commands.parameters.CommandParameter;
 import com.flash3388.flashview.commands.parameters.CommandParameterValue;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import javafx.util.Pair;
 
 import java.io.BufferedReader;
 import java.io.IOException;
