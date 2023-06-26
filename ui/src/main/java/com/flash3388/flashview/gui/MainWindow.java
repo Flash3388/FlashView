@@ -171,7 +171,7 @@ public class MainWindow {
 
             deploymentThread.start();
         });
-        deploy.setDisable(true);
+        deploy.setDisable(false);
 
         Button export = new Button("Export");
         export.setPrefSize(100.0, 70.0);

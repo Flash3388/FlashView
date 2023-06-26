@@ -1,7 +1,7 @@
 [
   {
     "id": "move",
-    "name": "MoveDistance",
+    "name": "Move Distance",
     "params": [
       {
         "name": "distance",
