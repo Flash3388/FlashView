@@ -4,6 +4,9 @@ import com.castle.util.closeables.Closer;
 import com.castle.util.logging.LoggerBuilder;
 import com.flash3388.flashview.commands.CommandType;
 import com.flash3388.flashview.deploy.Deployer;
+import com.flash3388.flashview.deploy.Destination;
+import com.flash3388.flashview.deploy.Remote;
+import com.flash3388.flashview.deploy.SshjDeployer;
 import com.flash3388.flashview.image.ImageLoader;
 import com.flash3388.flashview.io.CommandTypesLoader;
 import com.flash3388.flashview.io.JsonCommandTypesLoader;
@@ -31,7 +34,11 @@ public class Main {
         Closer closer = Closer.empty();
         closer.add(executorService::shutdownNow);
 
-        Deployer deployer = new Deployer.Stub();
+        Deployer deployer = new SshjDeployer(
+                new Remote("admin", "", "roborio-3388-frc.local"),
+                new Destination("/home/lvuser/flashviewProgram.json"),
+                logger
+        );
         ImageLoader imageLoader = new ImageLoader();
 
         try {

@@ -43,8 +43,11 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
@@ -138,9 +141,16 @@ public class MainWindow {
         deploy.setOnAction((e) -> {
             deploy.setDisable(true);
 
+            Program program = collectCommands();
+            ProgramSaver programSaver = new JsonProgramSaver();
+
             Thread deploymentThread = new Thread(()-> {
+                File temp = null;
                 try {
-                    //mDeployer.deploy(serialized);
+                    temp = File.createTempFile("deploy", "flashview");
+                    programSaver.save(program, temp.toPath());
+                    mDeployer.deploy(temp.toPath());
+
                     Platform.runLater(()->
                             Dialogs.showMessageDialog(mOwner, "Deployment Success",
                                     "Script deployed successfully"));
@@ -150,6 +160,12 @@ public class MainWindow {
                             Dialogs.showExceptionDialog(mOwner, "Deployment Failed", t));
                 } finally {
                     Platform.runLater(()-> deploy.setDisable(false));
+
+                    if (temp != null) {
+                        try {
+                            Files.delete(temp.toPath());
+                        } catch (IOException ex) { }
+                    }
                 }
             }, "Deployment");
 
