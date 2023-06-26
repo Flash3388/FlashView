@@ -64,7 +64,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
             File rootDeployPath = Filesystem.getDeployDirectory();
 
-            Path commandTypesFile = rootDeployPath.toPath().resolve("command-types.json");
+            Path commandTypesFile = rootDeployPath.toPath().resolve("commandTypes.json");
             CommandTypesLoader commandTypesLoader = new JsonCommandTypesLoader();
             List<CommandType> commandTypes = commandTypesLoader.load(commandTypesFile);
 

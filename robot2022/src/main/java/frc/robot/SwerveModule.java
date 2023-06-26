@@ -73,6 +73,15 @@ public class SwerveModule {
     public double getVelocityRpm(){
         return driveEncoder.getVelocity() * GEAR_RATIO; //in RPM units rotation per minute
     }
+
+    public void resetDistancePassed() {
+        driveEncoder.setPosition(0);
+    }
+
+    public double getDistancePassedMeters() {
+        return driveEncoder.getPosition() * GEAR_RATIO * WHEEL_RADIUS;
+    }
+
     public double getAbsEncoder() {
         return absoluteEncoder.getAbsolutePosition();
     }

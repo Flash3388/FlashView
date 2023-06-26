@@ -37,6 +37,7 @@ public class Main {
         Deployer deployer = new SshjDeployer(
                 new Remote("admin", "", "roborio-3388-frc.local"),
                 new Destination("/home/lvuser/flashviewProgram.json"),
+                COMMAND_TYPES_FILE.toPath(),
                 logger
         );
         ImageLoader imageLoader = new ImageLoader();

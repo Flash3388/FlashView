@@ -36,6 +36,14 @@ public class Swerve extends Subsystem {
         return gyro.getAngle();
     }
 
+    public void resetDistancePassed() {
+        swerveModules[0].resetDistancePassed();
+    }
+
+    public double getDistancePassedMeters() {
+        return swerveModules[0].getDistancePassedMeters();
+    }
+
     public void stop(){
         for (int i = 0; i < 4; i++) {
             this.swerveModules[i].stop();
