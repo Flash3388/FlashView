@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class SshjDeployer implements Deployer {
+
+    private static final String COMMAND_TYPES_FILE_NAME = "commandTypes.json";
+    private static final String PROGRAM_FILE_NAME = "flashviewProgram.json";
 
     private final Remote mRemote;
     private final Destination mDestination;
@@ -39,11 +41,11 @@ public class SshjDeployer implements Deployer {
                 SCPFileTransfer transfer = client.newSCPFileTransfer();
 
                 String uploadPath = mDestination.getPath();
-                String parentUploadPath = Paths.get(uploadPath).getParent().toString();
-                String uploadPathCommandTypes = parentUploadPath.concat("/").concat("commandTypes.json");
+                String programUploadPath = uploadPath.concat("/").concat(PROGRAM_FILE_NAME);
+                String commandTypesUploadPath = uploadPath.concat("/").concat(COMMAND_TYPES_FILE_NAME);
 
-                transfer.upload(new FileSystemFile(path.toFile().getAbsolutePath()), uploadPath);
-                transfer.upload(new FileSystemFile(mCommandTypesFile.toFile().getAbsolutePath()), uploadPathCommandTypes);
+                transfer.upload(new FileSystemFile(path.toFile().getAbsolutePath()), programUploadPath);
+                transfer.upload(new FileSystemFile(mCommandTypesFile.toFile().getAbsolutePath()), commandTypesUploadPath);
             } finally {
                 client.disconnect();
             }

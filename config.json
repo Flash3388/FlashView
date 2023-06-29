@@ -1,0 +1,10 @@
+{
+  "remote": {
+    "username": "admin",
+    "password": "",
+    "hostname": "roborio-3388-frc.local"
+  },
+  "destination": {
+    "path": "/home/lvuser/deploy"
+  }
+}

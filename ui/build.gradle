@@ -48,7 +48,6 @@ jar {
 javafx {
     version = '11'
     modules = [ 'javafx.controls' ]
-    platform = 'win'
 }
 
 application {
@@ -57,6 +56,22 @@ application {
     applicationDefaultJvmArgs = ['-Djdk.gtk.version=2']
 }
 
-run {
+distributions {
+    main {
+        contents {
+            from (rootProject.file('command-types.json')) {
+                into 'bin'
+            }
+            from (rootProject.file('config.json')) {
+                into 'bin'
+            }
+        }
+    }
+}
 
+run {
+    args = [
+            '--config-file', rootProject.file('config.json'),
+            '--command-types-file', rootProject.file('command-types.json')
+    ]
 }
