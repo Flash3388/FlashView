@@ -4,6 +4,7 @@ import com.flash3388.flashlib.scheduling.ActionControl;
 import com.flash3388.flashlib.scheduling.FinishReason;
 import com.flash3388.flashlib.scheduling.actions.ActionBase;
 import com.jmath.ExtendedMath;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Swerve;
 
 public class MoveDistance extends ActionBase {
@@ -23,17 +24,16 @@ public class MoveDistance extends ActionBase {
     @Override
     public void initialize(ActionControl control) {
         swerve.resetDistancePassed();
+        swerve.resetWheels();
     }
 
     @Override
     public void execute(ActionControl actionControl) {
         double speedY = 1 - (swerve.getDistancePassedMeters() / distanceToTravelM);
-        swerve.drive(0, speedY * Swerve.MAX_SPEED, 0);
+        swerve.drive(speedY * Swerve.MAX_SPEED, 0, 0);
 
-        if (ExtendedMath.constrained(
-                swerve.getDistancePassedMeters(),
-                distanceToTravelM - MARGIN,
-                distanceToTravelM + MARGIN)) {
+
+        if (Math.abs(swerve.getDistancePassedMeters()) >= distanceToTravelM) {
             actionControl.finish();
         }
     }

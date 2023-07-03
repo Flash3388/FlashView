@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.flash3388.flashlib.frc.robot.FrcRobotControl;
 import com.flash3388.flashlib.frc.robot.base.iterative.IterativeFrcRobot;
+import com.flash3388.flashlib.hid.XboxAxis;
+import com.flash3388.flashlib.hid.XboxController;
 import com.flash3388.flashlib.robot.base.DelegatingRobotControl;
 import com.flash3388.flashlib.scheduling.actions.Action;
 import com.flash3388.flashlib.scheduling.actions.ActionGroup;
@@ -14,6 +16,7 @@ import com.flash3388.flashview.io.JsonCommandTypesLoader;
 import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.commands.ActionCommandType;
 import frc.robot.actions.commands.MoveCommand;
 import frc.robot.actions.commands.RotateCommand;
@@ -29,10 +32,15 @@ import java.util.Map;
 public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     private final Swerve swerve;
+    private XboxController xbox;
 
     public Robot(FrcRobotControl robotControl) {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
+        xbox = getHidInterface().newXboxController(RobotMap.XBOX);
+
+
+
     }
 
     @Override
@@ -52,7 +60,14 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void teleopPeriodic() {
+        swerve.print();
+        double y = -xbox.getAxis(XboxAxis.LeftStickY).getAsDouble() * Swerve.MAX_SPEED;
 
+        double x = xbox.getAxis(XboxAxis.LeftStickX).getAsDouble() * Swerve.MAX_SPEED;
+
+        double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble() * Swerve.MAX_SPEED;
+
+        swerve.drive(y,x, rotation);
     }
 
     @Override
@@ -80,6 +95,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
                 group.add(action);
             }
 
+
             getLogger().info("Starting command sequence");
             group.start();
         } catch (IOException e) {
@@ -89,6 +105,11 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void autonomousPeriodic() {
+        SmartDashboard.getNumber("distance",0);
+        SmartDashboard.putNumber("distance",swerve.getDistancePassedMeters());
+
+        SmartDashboard.getNumber("angle",0);
+        SmartDashboard.putNumber("angle",swerve.getHeadingDegrees());
 
     }
 
@@ -104,6 +125,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void robotPeriodic() {
+        SmartDashboard.getNumber("distance",0);
+        SmartDashboard.putNumber("distance",swerve.getDistancePassedMeters());
 
     }
 

@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.flash3388.flashlib.scheduling.Subsystem;
+import com.jmath.ExtendedMath;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -28,9 +30,10 @@ public class Swerve extends Subsystem {
         Translation2d bL = new Translation2d(-OFFSET, OFFSET);
         Translation2d bR = new Translation2d(-OFFSET, -OFFSET);
 
-
+        gyro.reset();
         swerveDriveKinematics = new SwerveDriveKinematics(fL,fR,bL,bR);
     }
+
 
     public double getHeadingDegrees() {
         return gyro.getAngle();
@@ -62,7 +65,12 @@ public class Swerve extends Subsystem {
         }
     }
 
-    public void drive(double speedX, double speedY, double rotation){
+    public void resetWheels(){
+        this.drive(0,0,0);
+
+    }
+
+    public void drive(double speedY, double speedX, double rotation){
         //Part V: Kinematics of Swerve
         SwerveModuleState[] swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedY, speedX, rotation)); //convert kinematics to states[]
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED); //limits the speed
@@ -82,5 +90,6 @@ public class Swerve extends Subsystem {
         SmartDashboard.putNumber("FR abs", swerveModules[1].getAbsEncoder());
         SmartDashboard.putNumber("RL abs", swerveModules[2].getAbsEncoder());
         SmartDashboard.putNumber("RR abs", swerveModules[3].getAbsEncoder());
+        SmartDashboard.putNumber("Gyro angle",this.getHeadingDegrees());
     }
 }
