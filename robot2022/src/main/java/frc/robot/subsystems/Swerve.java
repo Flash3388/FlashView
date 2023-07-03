@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.flash3388.flashlib.scheduling.Subsystem;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -28,13 +29,20 @@ public class Swerve extends Subsystem {
         Translation2d bL = new Translation2d(-OFFSET, OFFSET);
         Translation2d bR = new Translation2d(-OFFSET, -OFFSET);
 
-
+        this.gyro.reset();
         swerveDriveKinematics = new SwerveDriveKinematics(fL,fR,bL,bR);
+
     }
 
     public double getHeadingDegrees() {
         return gyro.getAngle();
     }
+
+   /* public void moveWheelsForward(){
+        for(int i = 0; i < 4; i++){
+             swerveModules[i].MoveWheelTo0();
+        }
+    }*/
 
     public void resetDistancePassed() {
         swerveModules[0].resetDistancePassed();
@@ -62,11 +70,21 @@ public class Swerve extends Subsystem {
         }
     }
 
-    public void drive(double speedX, double speedY, double rotation){
+    public void drive(double speedY, double speedX, double rotation){
         //Part V: Kinematics of Swerve
         SwerveModuleState[] swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedY, speedX, rotation)); //convert kinematics to states[]
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED); //limits the speed
         setDesiredStates(swerveModuleStates);
+    }
+
+    public void moveWheelsForward() {
+        SwerveModuleState[] startingPosition = new SwerveModuleState[]{
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+        };
+        setDesiredStates(startingPosition);
     }
 
     public void print() {
