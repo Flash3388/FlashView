@@ -2,6 +2,7 @@ package frc.robot.actions.commands;
 
 import com.flash3388.flashlib.scheduling.actions.Action;
 import com.flash3388.flashview.commands.parameters.CommandParameterValue;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.RotateAngle;
 import frc.robot.subsystems.Swerve;
 
@@ -18,6 +19,7 @@ public class RotateCommand implements ActionCommandType {
     @Override
     public Action createAction(List<CommandParameterValue<?>> params) {
         double destAngle = (double) params.get(0).getValue();
-        return new RotateAngle(swerve, destAngle);
+        SmartDashboard.putNumber("destAngle", destAngle);
+        return new RotateAngle(swerve, -destAngle);
     }
 }
