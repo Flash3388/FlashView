@@ -10,16 +10,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class SwerveModule {
 
     private static final double STEER_P = 0.05;
-    private static final double STEER_I = 0;
-    private static final double STEER_D = 0;
-    private static final double STEER_F = 0;
+    private static final double STEER_I = 0.0002;
+    private static final double STEER_D = 0.015;
+    private static final double STEER_F = 0.004;
 
     private static final double DRIVE_P = 0.0003;
     private static final double DRIVE_I = 5e-7;
     private static final double DRIVE_D = 5e-7;
     private static final double DRIVE_F = 0.0001;
 
-    private static final double GEAR_RATIO = 1/6.75;
+    private static final double GEAR_RATIO_DRIVE = 1/6.75;
     private static final double WHEEL_RADIUS = 0.5005;
 
     private CANSparkMax drive; //forwards and backwards
@@ -29,7 +29,7 @@ public class SwerveModule {
     private SparkMaxPIDController pidDrive;
     private SparkMaxPIDController pidSteer;
     private CANCoder absoluteEncoder;
-
+    private static final double GEAR_RATIO_STEER = 1 / 12.8;
 
     public SwerveModule(CANSparkMax drive, CANSparkMax steer, CANCoder absoluteEncoder, double zeroAngle){
         this.drive=drive;
@@ -44,7 +44,7 @@ public class SwerveModule {
         this.pidSteer.setOutputRange(-1,1);
         this.absoluteEncoder = absoluteEncoder;
         double positionAbsEncoder = this.absoluteEncoder.getAbsolutePosition(); //divide angles in the creation of the absolute encoder
-        steerEncoder.setPosition((positionAbsEncoder - zeroAngle)/360/GEAR_RATIO);
+        steerEncoder.setPosition((positionAbsEncoder - zeroAngle)/360/ GEAR_RATIO_STEER);
 
         pidSteer.setP(STEER_P);
         pidSteer.setI(STEER_I);
@@ -70,8 +70,9 @@ public class SwerveModule {
     public double getHeadingDegrees(){
         return this.steerEncoder.getPosition() * (1/12.8) * 360;
     }
+
     public double getVelocityRpm(){
-        return driveEncoder.getVelocity() * GEAR_RATIO; //in RPM units rotation per minute
+        return driveEncoder.getVelocity() * GEAR_RATIO_DRIVE; //in RPM units rotation per minute
     }
 
     public void resetDistancePassed() {
@@ -79,7 +80,7 @@ public class SwerveModule {
     }
 
     public double getDistancePassedMeters() {
-        return driveEncoder.getPosition() * GEAR_RATIO * WHEEL_RADIUS;
+        return driveEncoder.getPosition() * GEAR_RATIO_DRIVE * WHEEL_RADIUS;
     }
 
     public double getAbsEncoder() {
@@ -88,9 +89,9 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState){
         SwerveModuleState optimizedState = optimize(desiredState, Rotation2d.fromDegrees(getHeadingDegrees()));
-        double velocityRpm = (optimizedState.speedMetersPerSecond * 60 / (WHEEL_RADIUS*2*Math.PI)) / GEAR_RATIO;
+        double velocityRpm = (optimizedState.speedMetersPerSecond * 60 / (WHEEL_RADIUS*2*Math.PI)) / GEAR_RATIO_DRIVE;
         this.pidDrive.setReference(velocityRpm,CANSparkMax.ControlType.kVelocity);
-        double steeringValue = optimizedState.angle.getDegrees()/360/GEAR_RATIO;
+        double steeringValue = optimizedState.angle.getDegrees()/360/ GEAR_RATIO_STEER;
         this.pidSteer.setReference(steeringValue,CANSparkMax.ControlType.kPosition);
     }
 
@@ -129,4 +130,12 @@ public class SwerveModule {
         }
         return newAngle;
     }
+/*
+    public void MoveWheelTo0() {
+        SwerveModuleState optimizedState = optimize(new SwerveModuleState(), Rotation2d.fromDegrees(getHeadingDegrees()));
+        double steeringValue = optimizedState.angle.getDegrees() / 360 / GEAR_RATIO;
+        this.pidSteer.setReference(steeringValue, CANSparkMax.ControlType.kPosition);
+        if(!ExtendedMath.constrained(getHeadingDegrees(), -2, 2))
+            MoveWheelTo0();
+    }*/
 }
