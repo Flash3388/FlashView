@@ -18,6 +18,7 @@ public class MoveDistance extends ActionBase {
         this.swerve = swerve;
         this.distanceToTravelM = distanceToTravelM;
 
+        configure().setName("Move "+ distanceToTravelM).save();
         requires(swerve);
     }
 

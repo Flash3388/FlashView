@@ -11,9 +11,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class SwerveModule {
 
     private static final double STEER_P = 0.05;
-    private static final double STEER_I = 0.0002;
-    private static final double STEER_D = 0.015;
-    private static final double STEER_F = 0.004;
+    private static final double STEER_I = 0;
+    private static final double STEER_D = 0.01;
+    private static final double STEER_F = 0;
 
     private static final double DRIVE_P = 0.0003;
     private static final double DRIVE_I = 5e-7;
