@@ -11,7 +11,7 @@
         <Logger name="FlashLib" level="debug" additivity="false">
             <AppenderRef ref="DriverStation"/>
         </Logger>
-        <Logger name="FlashLib.Scheduler" level="info" additivity="false">
+        <Logger name="FlashLib.Scheduler" level="debug" additivity="false">
             <AppenderRef ref="DriverStation"/>
         </Logger>
         <Logger name="FlashLib.FRC" level="info" additivity="false">

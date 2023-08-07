@@ -10,7 +10,7 @@ import frc.robot.subsystems.Swerve;
 
 public class RotateAngle extends ActionBase {
 
-    private static final double MARGIN = 5;
+    private static final double MARGIN = 0.5;
 
     private final Swerve swerve;
     private final double rotateByDegrees;
@@ -21,13 +21,14 @@ public class RotateAngle extends ActionBase {
     public RotateAngle(Swerve swerve, double rotateByDegrees) {
         this.swerve = swerve;
         this.rotateByDegrees = rotateByDegrees;
+        configure().setName("Rotate " + rotateByDegrees).save();
 
         requires(swerve);
     }
 
     @Override
     public void initialize(ActionControl control) {
-        if (rotateByDegrees < 1) {
+        if (Math.abs(rotateByDegrees) < 1) {
             control.finish();
             return;
         }
@@ -39,8 +40,14 @@ public class RotateAngle extends ActionBase {
     @Override
     public void execute(ActionControl actionControl) {
         double rotation = (destinationDegrees - swerve.getHeadingDegrees()) / rotateByDegrees * rotateDirection.sign();
+
+        if(Math.abs(rotation) < 0.2)
+            rotation = 0.2 * Math.signum(rotation);
+
         swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
+
         SmartDashboard.putBoolean("YES", false);
+
         if (ExtendedMath.constrained(
                 swerve.getHeadingDegrees(),
                 destinationDegrees - MARGIN,
