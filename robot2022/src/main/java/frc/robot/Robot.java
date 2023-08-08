@@ -15,12 +15,12 @@ import com.flash3388.flashview.io.CommandTypesLoader;
 import com.flash3388.flashview.io.JsonCommandTypesLoader;
 import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.actions.commands.ActionCommandType;
-import frc.robot.actions.commands.CollectCommand;
-import frc.robot.actions.commands.MoveCommand;
-import frc.robot.actions.commands.RotateCommand;
+import frc.robot.actions.commands.*;
+import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
 
 import java.io.File;
@@ -34,11 +34,14 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     private final Swerve swerve;
     private XboxController xbox;
+    private Gripper gripper;
 
     public Robot(FrcRobotControl robotControl) {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
+        this.gripper = new Gripper();
+        new Thread(new VisionTask()).start();
     }
 
     @Override
@@ -72,8 +75,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
             Map<String, ActionCommandType> supportedCommands = new HashMap<>();
             supportedCommands.put("move", new MoveCommand(swerve));
             supportedCommands.put("rotate", new RotateCommand(swerve));
-            supportedCommands.put("collect", new CollectCommand(swerve));
-            supportedCommands.put("place", new RotateCommand(swerve));
+            supportedCommands.put("collect", new CollectCommand(gripper));
+            supportedCommands.put("place", new PlaceCommand(gripper));
 
 
             File rootDeployPath = Filesystem.getDeployDirectory();
