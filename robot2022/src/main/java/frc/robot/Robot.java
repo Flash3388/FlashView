@@ -15,13 +15,12 @@ import com.flash3388.flashview.io.CommandTypesLoader;
 import com.flash3388.flashview.io.JsonCommandTypesLoader;
 import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.commands.*;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.VisionSystem;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,13 +34,15 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     private final Swerve swerve;
     private XboxController xbox;
     private Gripper gripper;
+    private VisionSystem visionSystem;
 
     public Robot(FrcRobotControl robotControl) {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
-        new Thread(new VisionTask()).start();
+        visionSystem = new VisionSystem();
+        new Thread(new VisionTask(visionSystem)).start();
     }
 
     @Override
