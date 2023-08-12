@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class VisionTask implements Runnable {
@@ -109,22 +110,28 @@ public class VisionTask implements Runnable {
             // let's get the biggest contour and decide it is the one we want.
             // of course this is an assumption, and there are better ways to find
             // the right contour, but for now it will do.
-            MatOfPoint best = findBiggestContour(contours);
-            // let's draw this shape on the image in a different color
-            drawSingleContour(threshold, best);
+            Optional<MatOfPoint> optionalBest = findBiggestContour(contours);
+            if (optionalBest.isPresent()) {
+                MatOfPoint best = optionalBest.get();
+                // let's draw this shape on the image in a different color
+                drawSingleContour(threshold, best);
 
-            // send the image so we could see it on the shuffleboard
-            output.putFrame(threshold);
-            output.putFrame(mat);
+                // send the image so we could see it on the shuffleboard
+                output.putFrame(threshold);
+                output.putFrame(mat);
 
-            // now we can extract information about the contour.
-            // for now, let's just get the offset between the contour and the center of the camera
-            Point contourCenter = getContourCenter(best);
-            Point imageCenter = new Point(threshold.width() / 2.0, threshold.height() / 2.0);
-            // you will need to save this value somewhere in the robot which is accessible for an action.
-            // the best way is to make a subsystem and give it the value
-            double distanceX = contourCenter.x - imageCenter.x;
-            visionSystem.setDistanceX(distanceX);
+                // now we can extract information about the contour.
+                // for now, let's just get the offset between the contour and the center of the camera
+                Point contourCenter = getContourCenter(best);
+                Point imageCenter = new Point(threshold.width() / 2.0, threshold.height() / 2.0);
+                // you will need to save this value somewhere in the robot which is accessible for an action.
+                // the best way is to make a subsystem and give it the value
+                double distanceX = contourCenter.x - imageCenter.x;
+                visionSystem.setDistanceX(distanceX);
+            } else {
+                // no best contour
+                visionSystem.setDistanceX(-1);
+            }
 
            // new VisionAutoAlign(visionSystem).start(); //***
 
@@ -163,8 +170,8 @@ public class VisionTask implements Runnable {
         }
     }
 
-    private MatOfPoint findBiggestContour(List<MatOfPoint> contours) {
-        return contours.stream().max(Comparator.comparingLong(MatOfPoint::total)).get();
+    private Optional<MatOfPoint> findBiggestContour(List<MatOfPoint> contours) {
+        return contours.stream().max(Comparator.comparingLong(MatOfPoint::total));
     }
 
     private void drawSingleContour(Mat image, MatOfPoint contour) {
