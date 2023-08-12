@@ -38,7 +38,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
         gripper = new Gripper();
-        //xbox = getHidInterface().newXboxController(RobotMap.XBOX);
+        xbox = getHidInterface().newXboxController(RobotMap.XBOX);
 
 
 

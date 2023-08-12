@@ -67,6 +67,20 @@ public class Swerve extends Subsystem {
 
     public void resetWheels(){
         this.drive(0,0,0);
+        /*
+        SwerveModuleState[] startingPosition = new SwerveModuleState[]{
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0)),
+                new SwerveModuleState(0, Rotation2d.fromDegrees(0))
+        };
+        setDesiredStates((startingPosition));
+         */
+
+
+
+
+
 
     }
 
