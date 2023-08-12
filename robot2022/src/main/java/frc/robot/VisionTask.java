@@ -4,6 +4,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.actions.VisionAutoAlign;
 import frc.robot.subsystems.VisionSystem;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -114,6 +115,7 @@ public class VisionTask implements Runnable {
 
             // send the image so we could see it on the shuffleboard
             output.putFrame(threshold);
+            output.putFrame(mat);
 
             // now we can extract information about the contour.
             // for now, let's just get the offset between the contour and the center of the camera
@@ -123,6 +125,8 @@ public class VisionTask implements Runnable {
             // the best way is to make a subsystem and give it the value
             double distanceX = contourCenter.x - imageCenter.x;
             visionSystem.setDistanceX(distanceX);
+
+           // new VisionAutoAlign(visionSystem).start(); //***
 
             // we don't want to force the computer to over-work by running the loop non-stop
             // so we put the thread to sleep for 100ms instead, giving it some break.

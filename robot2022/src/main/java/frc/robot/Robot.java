@@ -3,6 +3,7 @@ package frc.robot;
 import com.flash3388.flashlib.frc.robot.FrcRobotControl;
 import com.flash3388.flashlib.frc.robot.base.iterative.IterativeFrcRobot;
 import com.flash3388.flashlib.hid.XboxAxis;
+import com.flash3388.flashlib.hid.XboxButton;
 import com.flash3388.flashlib.hid.XboxController;
 import com.flash3388.flashlib.robot.base.DelegatingRobotControl;
 import com.flash3388.flashlib.scheduling.actions.Action;
@@ -17,6 +18,7 @@ import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.actions.VisionAutoAlign;
 import frc.robot.actions.commands.*;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
@@ -43,6 +45,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
         new Thread(new VisionTask(visionSystem)).start();
+        xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlign(visionSystem));
     }
 
     @Override
@@ -67,6 +70,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble()*4.4196;
         this.swerve.drive(driveY,driveX,rotation);
         swerve.print();
+
+
     }
 
     @Override
