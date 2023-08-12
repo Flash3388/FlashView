@@ -19,8 +19,7 @@ public class MoveCommand implements ActionCommandType {
     @Override
     public Action createAction(List<CommandParameterValue<?>> params) {
         double distanceM = (double) params.get(0).getValue() / 100;
-        SmartDashboard.getNumber("sent",0);
-        SmartDashboard.putNumber("sent", (double) params.get(0).getValue());
+        SmartDashboard.putNumber("Sent Distance", (double) params.get(0).getValue());
         return new MoveDistance(swerve, distanceM);
     }
 }

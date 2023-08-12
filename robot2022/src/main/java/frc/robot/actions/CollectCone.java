@@ -12,7 +12,7 @@ public class CollectCone extends ActionBase {
     public CollectCone(Gripper gripper) {
         this.gripper=gripper;
         requires(gripper);
-        configure().setTimeout(Time.seconds(0.6)).save();
+        configure().setTimeout(Time.seconds(1)).save(); //what is it doing?
     }
 
     @Override
