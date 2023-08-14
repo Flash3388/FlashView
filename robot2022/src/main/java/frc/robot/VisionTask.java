@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.flash3388.flashlib.time.Time;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
@@ -32,16 +33,17 @@ public class VisionTask implements Runnable {
 
     @Override
     public void run() {
-        SmartDashboard.putNumber("min H", 0);
-        SmartDashboard.putNumber("min S", 0);
-        SmartDashboard.putNumber("min V", 0);
-        SmartDashboard.putNumber("max H", 180);
+        SmartDashboard.putNumber("min H", 0); //hue-color portion of the model(0-360)
+        SmartDashboard.putNumber("min S", 0); //saturation-amount of gray in a particular color(0-100)
+        SmartDashboard.putNumber("min V", 0); //value-Brightness(0-100)
+        SmartDashboard.putNumber("max H", 360);
         SmartDashboard.putNumber("max S", 255);
         SmartDashboard.putNumber("max V", 255);
 
         CameraServer.startAutomaticCapture(0);
         CvSink sink = CameraServer.getVideo();
-        CvSource output = CameraServer.putVideo("processed", 320, 420);
+        CvSource output = CameraServer.putVideo("processed", 320, 420); //where is the video shown
+        CvSource output2 = CameraServer.putVideo("processed 2", 320, 420); //where is the video shown
 
         Mat mat = new Mat();
         Mat threshold = new Mat();
@@ -51,16 +53,22 @@ public class VisionTask implements Runnable {
                 continue;
             }
 
-            int minH = (int) SmartDashboard.getNumber("min H", 0);
+          /*  int minH = (int) SmartDashboard.getNumber("min H", 0);
             int minS = (int) SmartDashboard.getNumber("min S", 0);
             int minV = (int) SmartDashboard.getNumber("min V", 0);
-            int maxH = (int) SmartDashboard.getNumber("max H", 0);
-            int maxS = (int) SmartDashboard.getNumber("max S", 0);
-            int maxV = (int) SmartDashboard.getNumber("max V", 0);
+            int maxH = (int) SmartDashboard.getNumber("max H", 360);
+            int maxS = (int) SmartDashboard.getNumber("max S", 255);
+            int maxV = (int) SmartDashboard.getNumber("max V", 255); */
+            int minH = (int) SmartDashboard.getNumber("min H", 110);
+            int minS = (int) SmartDashboard.getNumber("min S", 50);
+            int minV = (int) SmartDashboard.getNumber("min V", 50);
+            int maxH = (int) SmartDashboard.getNumber("max H", 130);
+            int maxS = (int) SmartDashboard.getNumber("max S", 255);
+            int maxV = (int) SmartDashboard.getNumber("max V", 255);
 
             // convert the image from BGR to HSV color space
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2HSV);
-
+            output.putFrame(mat);
             // filter the image for colors within the range configured on the shuffleboard.
             // this will make threshold a binary image (made up of 0 and 1 pixels) where
             // the 1 pixels are the pixels which were within the color range.
@@ -68,6 +76,7 @@ public class VisionTask implements Runnable {
                     new Scalar(minH, minS, minV),
                     new Scalar(maxH, maxS, maxV),
                     threshold);
+           // output.putFrame(threshold);
 
             // with the binary image, we can now use an algorithm to detect "contours".
             // a contour is basically a collection of close and connected 1 pixels.
@@ -97,7 +106,7 @@ public class VisionTask implements Runnable {
             // is by taking a contour and "guessing" what shape it fits, assuming that parts of the shape
             // may be missing. So SHAPE_ACCURACY increases the chance a shape will fit what we want, but make it too big
             // and it will make contours appear like the wrong shape.
-            final int WANTED_SHAPE_VERTICES = 4;
+            final int WANTED_SHAPE_VERTICES = 0;
             final double SHAPE_ACCURACY = 0.2;
             removeContoursThatAreTheWrongShape(contours, WANTED_SHAPE_VERTICES, SHAPE_ACCURACY);
 
@@ -114,8 +123,8 @@ public class VisionTask implements Runnable {
             drawSingleContour(threshold, best);
 
             // send the image so we could see it on the shuffleboard
-            output.putFrame(threshold);
-            output.putFrame(mat);
+            output2.putFrame(threshold);
+
 
             // now we can extract information about the contour.
             // for now, let's just get the offset between the contour and the center of the camera
@@ -126,14 +135,18 @@ public class VisionTask implements Runnable {
             double distanceX = contourCenter.x - imageCenter.x;
             visionSystem.setDistanceX(distanceX);
 
-           // new VisionAutoAlign(visionSystem).start(); //***
+            SmartDashboard.putNumber("contour center", contourCenter.x);
+            SmartDashboard.putNumber("image center", imageCenter.x);
+            SmartDashboard.putNumber("distanceX", distanceX);
+
 
             // we don't want to force the computer to over-work by running the loop non-stop
             // so we put the thread to sleep for 100ms instead, giving it some break.
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
             }
+
         }
     }
 
@@ -169,6 +182,7 @@ public class VisionTask implements Runnable {
 
     private void drawSingleContour(Mat image, MatOfPoint contour) {
         Imgproc.drawContours(image, Collections.singletonList(contour), -1, new Scalar(50, 255, 50), 2);
+        //Imgproc.drawContours(image, contours, contour(best), new Scalar(50, 255, 50), 2);
     }
 
     private Point getContourCenter(MatOfPoint contour) {
