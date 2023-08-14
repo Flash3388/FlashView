@@ -118,7 +118,7 @@ public class VisionTask implements Runnable {
 
                 // send the image so we could see it on the shuffleboard
                 output.putFrame(threshold);
-                output.putFrame(mat);
+
 
                 // now we can extract information about the contour.
                 // for now, let's just get the offset between the contour and the center of the camera

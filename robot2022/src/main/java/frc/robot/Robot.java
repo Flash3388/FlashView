@@ -45,7 +45,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
         new Thread(new VisionTask(visionSystem)).start();
-        xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlign(visionSystem));
+        xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlign(visionSystem, swerve));
     }
 
     @Override

@@ -16,9 +16,9 @@ public class VisionAutoAlign extends ActionBase {
     private final VisionSystem visionSystem;
     private Swerve swerve;
 
-    public VisionAutoAlign(VisionSystem visionSystem) {
+    public VisionAutoAlign(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
-        this.swerve = SystemFactory.createSwerveSystem();
+        this.swerve = swerve;
     }
 
     @Override
@@ -28,8 +28,7 @@ public class VisionAutoAlign extends ActionBase {
         // move until distanceX is as close as possible 0,
         // indicating the robot is aligned with the target
 
-        swerve.drive(0, 0, 0.2); // maybe 1 - 1/distanceX
-        SmartDashboard.putNumber("distanceX", distanceX);
+        swerve.drive(0, 0, 0.2 * Math.signum(distanceX)); // maybe 1 - 1/distanceX
         if(ExtendedMath.constrained(distanceX, -3, 3))
             actionControl.finish();
     }
