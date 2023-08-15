@@ -30,7 +30,7 @@ public class VisionAutoAlign extends ActionBase {
 
     @Override
     public void execute(ActionControl actionControl) {
-        double distanceX = visionSystem.getDistanceX();
+        double distanceX = visionSystem.getXAngleToTarget(); // degrees
         //distanceX = contourCenter.x - imageCenter.x;
         // axis x- to the right, axis y- down
         //actionControl.finish;

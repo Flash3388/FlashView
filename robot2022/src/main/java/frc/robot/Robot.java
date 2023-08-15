@@ -44,7 +44,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
-        new Thread(new VisionTask(visionSystem)).start();
+        //new Thread(new VisionTask(visionSystem)).start();
     }
 
     @Override
