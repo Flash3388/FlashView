@@ -135,10 +135,10 @@ public class VisionTask implements Runnable {
                 // you will need to save this value somewhere in the robot which is accessible for an action.
                 // the best way is to make a subsystem and give it the value
                 double distanceX = contourCenter.x - imageCenter.x;
-                visionSystem.setDistanceX(distanceX);
+                /*visionSystem.setDistanceX(distanceX);
             } else {
                 // no best contour
-                visionSystem.setDistanceX(-1);
+                visionSystem.setDistanceX(-1);*/
             }
 
            // new VisionAutoAlign(visionSystem).start(); //***
