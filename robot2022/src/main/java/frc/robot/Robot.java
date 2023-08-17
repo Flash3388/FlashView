@@ -18,7 +18,7 @@ import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.actions.VisionAutoAlign;
+import frc.robot.actions.VisionAutoAlignByPigeon;
 import frc.robot.actions.commands.*;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
@@ -44,8 +44,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
-        new Thread(new VisionTask(visionSystem)).start();
-        xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlign(visionSystem, swerve));
+     //   new Thread(new VisionTask(visionSystem)).start();
+        xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
     }
 
     @Override

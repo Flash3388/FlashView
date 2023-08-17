@@ -38,6 +38,10 @@ public class Swerve extends Subsystem {
         return gyro.getAngle();
     }
 
+    public void setHeadingDegrees(){
+        this.gyro.setYaw(0);
+    }
+
    /* public void moveWheelsForward(){
         for(int i = 0; i < 4; i++){
              swerveModules[i].MoveWheelTo0();

@@ -4,7 +4,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.actions.VisionAutoAlign;
 import frc.robot.subsystems.VisionSystem;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -33,16 +32,19 @@ public class VisionTask implements Runnable {
 
     @Override
     public void run() {
-        SmartDashboard.putNumber("min H", 0);
-        SmartDashboard.putNumber("min S", 0);
-        SmartDashboard.putNumber("min V", 0);
-        SmartDashboard.putNumber("max H", 180);
+        SmartDashboard.putNumber("min H", 100);
+        SmartDashboard.putNumber("min S", 90);
+        SmartDashboard.putNumber("min V", 70);
+        SmartDashboard.putNumber("max H", 120);
         SmartDashboard.putNumber("max S", 255);
         SmartDashboard.putNumber("max V", 255);
 
         CameraServer.startAutomaticCapture(0);
         CvSink sink = CameraServer.getVideo();
         CvSource output = CameraServer.putVideo("processed", 320, 420);
+        CvSource output2 = CameraServer.putVideo("processed 2", 320, 420);
+        CvSource output3 = CameraServer.putVideo("processed 3", 320, 420);
+        CvSource output4 = CameraServer.putVideo("processed 4", 320, 420);
 
         Mat mat = new Mat();
         Mat threshold = new Mat();
@@ -52,12 +54,12 @@ public class VisionTask implements Runnable {
                 continue;
             }
 
-            int minH = (int) SmartDashboard.getNumber("min H", 0);
-            int minS = (int) SmartDashboard.getNumber("min S", 0);
-            int minV = (int) SmartDashboard.getNumber("min V", 0);
-            int maxH = (int) SmartDashboard.getNumber("max H", 0);
-            int maxS = (int) SmartDashboard.getNumber("max S", 0);
-            int maxV = (int) SmartDashboard.getNumber("max V", 0);
+            int minH = (int) SmartDashboard.getNumber("min H", 100);
+            int minS = (int) SmartDashboard.getNumber("min S", 90);
+            int minV = (int) SmartDashboard.getNumber("min V", 70);
+            int maxH = (int) SmartDashboard.getNumber("max H", 120);
+            int maxS = (int) SmartDashboard.getNumber("max S", 255);
+            int maxV = (int) SmartDashboard.getNumber("max V", 255);
 
             // convert the image from BGR to HSV color space
             Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2HSV);
@@ -69,6 +71,7 @@ public class VisionTask implements Runnable {
                     new Scalar(minH, minS, minV),
                     new Scalar(maxH, maxS, maxV),
                     threshold);
+
 
             // with the binary image, we can now use an algorithm to detect "contours".
             // a contour is basically a collection of close and connected 1 pixels.
@@ -98,14 +101,19 @@ public class VisionTask implements Runnable {
             // is by taking a contour and "guessing" what shape it fits, assuming that parts of the shape
             // may be missing. So SHAPE_ACCURACY increases the chance a shape will fit what we want, but make it too big
             // and it will make contours appear like the wrong shape.
-            final int WANTED_SHAPE_VERTICES = 4;
+            final int WANTED_SHAPE_VERTICES = 0;
             final double SHAPE_ACCURACY = 0.2;
             removeContoursThatAreTheWrongShape(contours, WANTED_SHAPE_VERTICES, SHAPE_ACCURACY);
 
             // let's draw the shapes we have left to see. To do that, we will make threshold
             // into a colored image so we can draw colors on it
+
+            output2.putFrame(threshold);
             Imgproc.cvtColor(threshold, threshold, Imgproc.COLOR_GRAY2RGB);
+            output3.putFrame(threshold);
+
             Imgproc.drawContours(threshold, contours, -1, new Scalar(255, 50, 50), 2);
+
 
             // let's get the biggest contour and decide it is the one we want.
             // of course this is an assumption, and there are better ways to find
@@ -118,7 +126,7 @@ public class VisionTask implements Runnable {
 
                 // send the image so we could see it on the shuffleboard
                 output.putFrame(threshold);
-
+                SmartDashboard.putBoolean("in the if", true);
 
                 // now we can extract information about the contour.
                 // for now, let's just get the offset between the contour and the center of the camera
