@@ -22,30 +22,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class VisionTask implements Runnable  {
+public class VisionTask_oldWay implements Runnable {
+
     private final VisionSystem visionSystem;
 
-    public VisionTask(VisionSystem visionSystem) {
+    public VisionTask_oldWay(VisionSystem visionSystem) {
         this.visionSystem = visionSystem;
     }
 
     @Override
     public void run() {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         SmartDashboard.putNumber("min H", 100); //hue-color portion of the model(0-360)
         SmartDashboard.putNumber("min S", 90); //saturation-amount of gray in a particular color(0-100)
@@ -68,6 +54,12 @@ public class VisionTask implements Runnable  {
                 continue;
             }
 
+          /*  int minH = (int) SmartDashboard.getNumber("min H", 0);
+            int minS = (int) SmartDashboard.getNumber("min S", 0);
+            int minV = (int) SmartDashboard.getNumber("min V", 0);
+            int maxH = (int) SmartDashboard.getNumber("max H", 360);
+            int maxS = (int) SmartDashboard.getNumber("max S", 255);
+            int maxV = (int) SmartDashboard.getNumber("max V", 255); */
             int minH = (int) SmartDashboard.getNumber("min H", 100);
             int minS = (int) SmartDashboard.getNumber("min S", 90);
             int minV = (int) SmartDashboard.getNumber("min V", 70);
@@ -89,8 +81,8 @@ public class VisionTask implements Runnable  {
                     threshold);
             output2.putFrame(threshold);
 
-            //    Imgproc.cvtColor(threshold, threshold, Imgproc.COLOR_GRAY2RGB);
-            //     output4.putFrame(threshold);
+        //    Imgproc.cvtColor(threshold, threshold, Imgproc.COLOR_GRAY2RGB);
+       //     output4.putFrame(threshold);
             // with the binary image, we can now use an algorithm to detect "contours".
             // a contour is basically a collection of close and connected 1 pixels.
             // basically, each "contour" is a different object seen by the camera
@@ -141,10 +133,10 @@ public class VisionTask implements Runnable  {
                 // let's draw this shape on the image in a different color
                 drawSingleContour(threshold, best);
 
-                // output3.putFrame(threshold);
+               // output3.putFrame(threshold);
                 // send the image so we could see it on the shuffleboard
-                //   output.putFrame(threshold);
-                //   output2.putFrame(mat);
+             //   output.putFrame(threshold);
+             //   output2.putFrame(mat);
 
                 // now we can extract information about the contour.
                 // for now, let's just get the offset between the contour and the center of the camera
@@ -153,12 +145,12 @@ public class VisionTask implements Runnable  {
                 // you will need to save this value somewhere in the robot which is accessible for an action.
                 // the best way is to make a subsystem and give it the value
                 double distanceX = contourCenter.x - imageCenter.x;
-                //      visionSystem.setDistanceX(distanceX);
+          //      visionSystem.setDistanceX(distanceX);
 
                 SmartDashboard.putNumber("distanceX", distanceX);
             } else {
                 // no best contour
-                //      visionSystem.setDistanceX(-1);
+          //      visionSystem.setDistanceX(-1);
                 SmartDashboard.putNumber("distanceX", -1);
                 SmartDashboard.putBoolean("got here?", true);
             }
