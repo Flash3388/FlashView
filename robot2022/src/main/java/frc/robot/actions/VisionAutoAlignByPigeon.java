@@ -33,10 +33,10 @@ public class VisionAutoAlignByPigeon extends ActionBase {
         this.setPoint = currentPosition + visionSystem.getXAngleToTarget();
 
         this.pid = new PidController(RunningRobot.getControl().getClock(),
-                ()-> SmartDashboard.getNumber("KP_A", KP),
-                ()-> SmartDashboard.getNumber("KI_A", KI),
-                ()-> SmartDashboard.getNumber("KD_A", KD),
-                ()-> SmartDashboard.getNumber("KF_A", KF));
+                ()-> SmartDashboard.getNumber("KP", KP),
+                ()-> SmartDashboard.getNumber("KI", KI),
+                ()-> SmartDashboard.getNumber("KD", KD),
+                ()-> SmartDashboard.getNumber("KF", KF));
         pid.setOutputLimit(-1, 1);
         pid.setTolerance(ERROR, Time.milliseconds(500));
 
@@ -72,7 +72,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
 
     @Override
     public boolean isFinished() {
-       return ExtendedMath.constrained(currentPosition, -ERROR, ERROR);
+       return ExtendedMath.constrained(currentPosition, setPoint - ERROR, setPoint + ERROR);
     }
 
     @Override
