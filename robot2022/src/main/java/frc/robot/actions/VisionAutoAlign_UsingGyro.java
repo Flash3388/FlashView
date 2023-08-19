@@ -8,28 +8,33 @@ import com.flash3388.flashlib.scheduling.FinishReason;
 import com.flash3388.flashlib.scheduling.actions.ActionBase;
 import com.flash3388.flashlib.time.Time;
 import com.jmath.ExtendedMath;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSystem;
 
-public class VisionAutoAlign extends ActionBase {
-
+public class VisionAutoAlign_UsingGyro extends ActionBase{
     private final VisionSystem visionSystem;
     private final Swerve swerve;
     private final double ANGLE_ERROR = 1;
+    private double angle2Target = 0;
+    private double startingAngle = 0;
     private PidController pidController;
     private final double KP = 1;
     private final double KI = 0.03;
     private final double KD = 0;
     private final double KF = 0;
-    private final double PID_ERROR = 0.5;
-    private final double PID_LIMIT = 2;
+    private final double PID_ERROR = 0.1;
+    private final double PID_LIMIT = 0.7;
+    private double deviationDistance = -3;
 
 
-    public VisionAutoAlign(VisionSystem visionSystem, Swerve swerve) {
+    public VisionAutoAlign_UsingGyro(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
+        startingAngle = swerve.getHeadingDegrees();
+        if(visionSystem.getXAngleToTarget() < 0) deviationDistance = 1.5;
+        this.angle2Target = visionSystem.getXAngleToTarget() + startingAngle  + deviationDistance;
+
         SmartDashboard.putNumber("KP", KP);
         SmartDashboard.putNumber("KI", KI);
         SmartDashboard.putNumber("KD", KD);
@@ -53,21 +58,27 @@ public class VisionAutoAlign extends ActionBase {
     }
 
     @Override
+    public void initialize(ActionControl control) {
+        pidController.reset();
+    }
+
+    @Override
     public void execute(ActionControl actionControl) {
-        double angle2Target = visionSystem.getXAngleToTarget(); // degrees
         //distanceX = contourCenter.x - imageCenter.x;
         // axis x- to the right, axis y- down
         //actionControl.finish;
-        if(!ExtendedMath.constrained(angle2Target, -ANGLE_ERROR, ANGLE_ERROR)) {
+        double gyroAngle = swerve.getHeadingDegrees();
 
-            Direction rotateDirection = angle2Target > 0 ? Direction.FORWARD : Direction.BACKWARD; //if + then right, if - left
-            double rotation = 0.2 * rotateDirection.sign();
+        SmartDashboard.putNumber("gyro angle", gyroAngle);
+        SmartDashboard.putNumber("starting angle", startingAngle);
+        SmartDashboard.putNumber("angle2Target", angle2Target);
 
-           /* if(Math.abs(rotation) < 0.2)
-                rotation = 0.2 * Math.signum(rotation); //makes a faster rotation
-            */
+        if(!ExtendedMath.constrained(gyroAngle, -ANGLE_ERROR + angle2Target, ANGLE_ERROR + angle2Target)) {
+
+           // Direction rotateDirection = angle2Target < startingAngle ? Direction.BACKWARD : Direction.FORWARD; //if + then right, if - left
+            double rotation = pidController.applyAsDouble(gyroAngle, angle2Target) * swerve.MAX_SPEED;
+            SmartDashboard.putNumber("rotation", rotation);
             swerve.drive(0, 0, -rotation);
-            //swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
         }
         else {
             SmartDashboard.putBoolean("got to target", true);

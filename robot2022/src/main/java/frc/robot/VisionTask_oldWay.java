@@ -54,12 +54,6 @@ public class VisionTask_oldWay implements Runnable {
                 continue;
             }
 
-          /*  int minH = (int) SmartDashboard.getNumber("min H", 0);
-            int minS = (int) SmartDashboard.getNumber("min S", 0);
-            int minV = (int) SmartDashboard.getNumber("min V", 0);
-            int maxH = (int) SmartDashboard.getNumber("max H", 360);
-            int maxS = (int) SmartDashboard.getNumber("max S", 255);
-            int maxV = (int) SmartDashboard.getNumber("max V", 255); */
             int minH = (int) SmartDashboard.getNumber("min H", 100);
             int minS = (int) SmartDashboard.getNumber("min S", 90);
             int minV = (int) SmartDashboard.getNumber("min V", 70);

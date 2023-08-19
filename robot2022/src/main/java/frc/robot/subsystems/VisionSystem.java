@@ -7,7 +7,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSystem extends Subsystem {
 
-    private PhotonCamera camera = new PhotonCamera("photonvision");
+    double distanceX = 0;
+    private PhotonCamera camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
 
     public VisionSystem() {
     }
@@ -19,6 +20,12 @@ public class VisionSystem extends Subsystem {
     public double getXAngleToTarget() {
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
         PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
-        return bestTarget.getYaw();
+        if(bestTarget != null){
+            return bestTarget.getYaw();
+        }
+        else return 0;
+    }
+    public double getDistanceX(){
+        return this.distanceX;
     }
 }

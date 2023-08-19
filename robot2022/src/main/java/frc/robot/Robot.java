@@ -19,6 +19,7 @@ import com.flash3388.flashview.io.ProgramLoader;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.VisionAutoAlign;
+import frc.robot.actions.VisionAutoAlign_UsingGyro;
 import frc.robot.actions.commands.*;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
@@ -69,7 +70,9 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble()*4.4196;
         this.swerve.drive(driveY,driveX,rotation); */
         //xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
+
         xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
+        xbox.getButton(XboxButton.B).whenActive(new VisionAutoAlign_UsingGyro(visionSystem, swerve));
 
         swerve.print();
 
