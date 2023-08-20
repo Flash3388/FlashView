@@ -17,12 +17,14 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
     private double distanceX;
     private PidController pid;
 
-    private static final double KP = 0;
+    private static final double KP = 1;
     private static final double KI = 0;
     private static final double KD = 0;
     private static final double KF = 0;
 
-    private static final double ERROR = 3;
+    private static final double ERROR = 1;
+
+    private static final double SET_POINT = 0;
 
     public VisionAutoAlignByDistanceX(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
@@ -41,13 +43,20 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
         SmartDashboard.putNumber("KI_D", KI);
         SmartDashboard.putNumber("KD_D", KD);
         SmartDashboard.putNumber("KF_D", KF);
+
+    }
+
+    @Override
+    public void initialize(ActionControl control) {
+        pid.reset();
+        distanceX = visionSystem.getXAngleToTarget();
         SmartDashboard.putNumber("DISTANCE_X", distanceX);
     }
 
     @Override
     public void execute(ActionControl control) {
         this.distanceX = visionSystem.getXAngleToTarget();
-        double rotation = pid.applyAsDouble(distanceX, 0);
+        double rotation = pid.applyAsDouble(distanceX, SET_POINT);
         swerve.drive(0,0, rotation);
     }
 
