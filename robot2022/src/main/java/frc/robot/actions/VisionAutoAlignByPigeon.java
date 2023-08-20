@@ -13,38 +13,41 @@ import frc.robot.subsystems.VisionSystem;
 
 public class VisionAutoAlignByPigeon extends ActionBase {
 
-    private final VisionSystem visionSystem;
+    private VisionSystem visionSystem;
     private Swerve swerve;
     private double setPoint;
     private double currentPosition;
     private PidController pid;
 
-    private static final double KP = 0;
-    private static final double KI = 0;
-    private static final double KD = 0;
-    private static final double KF = 0;
+    private static final double KP_G = 1;
+    private static final double KI_G = 0;
+    private static final double KD_G = 0;
+    private static final double KF_G = 0;
 
-    private static final double ERROR = 3;
+    private static final double ERROR = 1;
 
     public VisionAutoAlignByPigeon(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
         this.currentPosition = swerve.getHeadingDegrees();
-        this.setPoint = currentPosition + visionSystem.getXAngleToTarget();
+        this.setPoint = this.currentPosition + visionSystem.getXAngleToTarget()   ;
+
 
         this.pid = new PidController(RunningRobot.getControl().getClock(),
-                ()-> SmartDashboard.getNumber("KP", KP),
-                ()-> SmartDashboard.getNumber("KI", KI),
-                ()-> SmartDashboard.getNumber("KD", KD),
-                ()-> SmartDashboard.getNumber("KF", KF));
+                ()-> SmartDashboard.getNumber("KP_G", KP_G),
+                ()-> SmartDashboard.getNumber("KI_G", KI_G),
+                ()-> SmartDashboard.getNumber("KD_G", KD_G),
+                ()-> SmartDashboard.getNumber("KF_G", KF_G));
         pid.setOutputLimit(-1, 1);
         pid.setTolerance(ERROR, Time.milliseconds(500));
 
-        SmartDashboard.putNumber("KP", KP);
-        SmartDashboard.putNumber("KI", KI);
-        SmartDashboard.putNumber("KD", KD);
-        SmartDashboard.putNumber("KF", KF);
-        SmartDashboard.putNumber("SET_POINT", setPoint);
+        SmartDashboard.putNumber("KP", KP_G);
+        SmartDashboard.putNumber("KI", KI_G);
+        SmartDashboard.putNumber("KD", KD_G);
+        SmartDashboard.putNumber("KF", KF_G);
+
+
+      //  SmartDashboard.putNumber("SET_POINT", setPoint);
 
         configure().setName("VisionAutoAlign_ByPigeon").save();
 
@@ -54,17 +57,25 @@ public class VisionAutoAlignByPigeon extends ActionBase {
     @Override
     public void initialize(ActionControl control) {
         pid.reset();
+        this.currentPosition = swerve.getHeadingDegrees();
+        this.setPoint = this.currentPosition + visionSystem.getXAngleToTarget() - 6;
+        SmartDashboard.putNumber("SET_POINT", setPoint);
+
+        SmartDashboard.putNumber("X_ANGLE_TO_TARGET", visionSystem.getXAngleToTarget());
+        SmartDashboard.putNumber("START_POINT", swerve.getHeadingDegrees());
+
     }
 
     @Override
     public void execute(ActionControl actionControl) {
         this.currentPosition = swerve.getHeadingDegrees();
+        SmartDashboard.putNumber("CURRENT_POSITION", this.currentPosition);
 
-        double rotation = this.pid.applyAsDouble(currentPosition, setPoint);
+        double rotation = this.pid.applyAsDouble(this.currentPosition, setPoint) * swerve.MAX_SPEED;
         // move until distanceX is as close as possible 0,
         // indicating the robot is aligned with the target
 
-        swerve.drive(0, 0, rotation);
+        swerve.drive(0, 0, -rotation);
 
        /* if(ExtendedMath.constrained(currentPosition, -3, 3))
             actionControl.finish();*/
@@ -72,7 +83,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
 
     @Override
     public boolean isFinished() {
-       return ExtendedMath.constrained(currentPosition, setPoint - ERROR, setPoint + ERROR);
+       return ExtendedMath.constrained(this.currentPosition, setPoint - ERROR, setPoint + ERROR);
     }
 
     @Override
