@@ -69,13 +69,18 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     @Override
     public void teleopPeriodic() {
 
-        double driveY = xbox.getAxis(XboxAxis.LeftStickY).getAsDouble()*4.4196;
-      /*  double driveX = xbox.getAxis(XboxAxis.LeftStickX).getAsDouble()*4.4196;
+        double driveY = -xbox.getAxis(XboxAxis.LeftStickY).getAsDouble()*4.4196 ;
+        double driveX = -xbox.getAxis(XboxAxis.LeftStickX).getAsDouble()*4.4196 ;
         double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble()*4.4196;
-        this.swerve.drive(driveY,driveX,rotation);
-        swerve.print();*/
-       // this.swerve.drive(driveY, 0, 0);
 
+        driveY = Math.abs(driveY) > 0.2 ? driveY : 0;
+        driveX = Math.abs(driveX) > 0.2 ? driveX : 0;
+        rotation = Math.abs(rotation) > 0.2 ? rotation : 0;
+
+      //  this.swerve.drive(driveY,driveX,rotation);
+        this.swerve.drive(4, 0, 0);
+        swerve.print();
+       // this.swerve.drive(driveY, 0, 0);
 
     }
 
