@@ -17,13 +17,20 @@ public class VisionSystem extends Subsystem {
         camera.setPipelineIndex(0);
     }
 
+    public double isThereATarget(){
+        PhotonPipelineResult pipelineResult = camera.getLatestResult();
+        PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
+        if(bestTarget != null){
+            return 0;
+        } else return -6;
+    }
     public double getXAngleToTarget() {
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
         PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
         if(bestTarget != null){
             return bestTarget.getYaw();
         }
-        else return 0;
+        else return 6;
     }
     public double getDistanceX(){
         return this.distanceX;

@@ -45,7 +45,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
-        //new Thread(new VisionTask(visionSystem)).start();
+       // new Thread(new VisionTask(visionSystem)).start();
     }
 
     @Override
@@ -74,7 +74,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
         xbox.getButton(XboxButton.B).whenActive(new VisionAutoAlign_UsingGyro(visionSystem, swerve));
 
-        swerve.print();
+       // swerve.print();
 
 
     }
@@ -128,6 +128,18 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void testPeriodic() {
+
+        double driveY = xbox.getAxis(XboxAxis.LeftStickY).getAsDouble();
+        double driveX = xbox.getAxis(XboxAxis.LeftStickX).getAsDouble();
+        double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble();
+        if(driveX< 0.2) driveX =0;
+        if(driveY< 0.2) driveX =0;
+        if(rotation< 0.2) driveX =0;
+
+
+
+        this.swerve.drive(driveY * Swerve.MAX_SPEED,driveX * Swerve.MAX_SPEED,rotation * Swerve.MAX_SPEED);
+        //xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
 
     }
 

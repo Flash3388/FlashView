@@ -17,14 +17,13 @@ public class VisionAutoAlign extends ActionBase {
 
     private final VisionSystem visionSystem;
     private final Swerve swerve;
-    private final double ANGLE_ERROR = 1;
     private PidController pidController;
     private final double KP = 1;
     private final double KI = 0.03;
     private final double KD = 0;
     private final double KF = 0;
-    private final double PID_ERROR = 0.5;
-    private final double PID_LIMIT = 2;
+    private final double PID_ERROR = 2;
+    private final double PID_LIMIT = 1;
 
 
     public VisionAutoAlign(VisionSystem visionSystem, Swerve swerve) {
@@ -49,35 +48,46 @@ public class VisionAutoAlign extends ActionBase {
                 }); //something
         pidController.setTolerance(PID_ERROR, Time.milliseconds(500));
         pidController.setOutputLimit(PID_LIMIT);
+
+        configure().setName("VisionAutoAlign").save();
+
         requires(swerve);
     }
 
     @Override
+    public void initialize(ActionControl control) {
+        pidController.reset();
+    }
+
+    @Override
     public void execute(ActionControl actionControl) {
-        double angle2Target = visionSystem.getXAngleToTarget(); // degrees
+        double angle2Target = visionSystem.getXAngleToTarget() + visionSystem.isThereATarget(); // degrees
+        SmartDashboard.putNumber("angle2Target", angle2Target);
         //distanceX = contourCenter.x - imageCenter.x;
         // axis x- to the right, axis y- down
         //actionControl.finish;
-        if(!ExtendedMath.constrained(angle2Target, -ANGLE_ERROR, ANGLE_ERROR)) {
-
-            Direction rotateDirection = angle2Target > 0 ? Direction.FORWARD : Direction.BACKWARD; //if + then right, if - left
-            double rotation = 0.2 * rotateDirection.sign();
+        //Direction rotateDirection = angle2Target > 0 ? Direction.FORWARD : Direction.BACKWARD; //if + then right, if - left
+        double rotation = pidController.applyAsDouble(angle2Target, 0) * swerve.MAX_SPEED;
 
            /* if(Math.abs(rotation) < 0.2)
                 rotation = 0.2 * Math.signum(rotation); //makes a faster rotation
             */
-            swerve.drive(0, 0, -rotation);
-            //swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
-        }
-        else {
-            SmartDashboard.putBoolean("got to target", true);
-            actionControl.finish();
-        }
+        swerve.drive(0, 0, -rotation);
+        //swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
 
         // move until distanceX is as close as possible 0,
         // indicating the robot is aligned with the target
 
 
+    }
+
+    @Override
+    public boolean isFinished() {
+        double angle2Target = visionSystem.getXAngleToTarget() + visionSystem.isThereATarget();
+        if(ExtendedMath.constrained(angle2Target, -PID_ERROR, PID_ERROR)){
+        SmartDashboard.putBoolean("got to target", true);
+        return true;}
+        else return false;
     }
 
     @Override

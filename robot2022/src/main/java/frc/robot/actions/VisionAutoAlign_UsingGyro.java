@@ -8,6 +8,8 @@ import com.flash3388.flashlib.scheduling.FinishReason;
 import com.flash3388.flashlib.scheduling.actions.ActionBase;
 import com.flash3388.flashlib.time.Time;
 import com.jmath.ExtendedMath;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSystem;
@@ -15,24 +17,22 @@ import frc.robot.subsystems.VisionSystem;
 public class VisionAutoAlign_UsingGyro extends ActionBase{
     private final VisionSystem visionSystem;
     private final Swerve swerve;
-    private final double ANGLE_ERROR = 1;
     private double angle2Target = 0;
     private double startingAngle = 0;
     private PidController pidController;
-    private final double KP = 1;
-    private final double KI = 0.03;
+    private final double KP = 0.3;
+    private final double KI = 0;
     private final double KD = 0;
     private final double KF = 0;
-    private final double PID_ERROR = 0.1;
-    private final double PID_LIMIT = 0.7;
-    private double deviationDistance = -3;
+    private final double PID_ERROR = 1;
+    private final double PID_LIMIT = 1;
+    private double deviationDistance = -6;
 
 
     public VisionAutoAlign_UsingGyro(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
         startingAngle = swerve.getHeadingDegrees();
-        if(visionSystem.getXAngleToTarget() < 0) deviationDistance = 1.5;
         this.angle2Target = visionSystem.getXAngleToTarget() + startingAngle  + deviationDistance;
 
         SmartDashboard.putNumber("KP", KP);
@@ -40,25 +40,23 @@ public class VisionAutoAlign_UsingGyro extends ActionBase{
         SmartDashboard.putNumber("KD", KD);
         SmartDashboard.putNumber("KF", KF);
         pidController = new PidController(RunningRobot.getControl().getClock(),
-                ()-> {
-                    return SmartDashboard.getNumber("KP", KP);
-                },
-                ()-> {
-                    return SmartDashboard.getNumber("KI", KI);
-                },
-                ()-> {
-                    return SmartDashboard.getNumber("KD", KD);
-                },
-                ()-> {
-                    return SmartDashboard.getNumber("KF", KF);
-                }); //something
+                ()-> SmartDashboard.getNumber("KP", KP),
+                ()-> SmartDashboard.getNumber("KI", KI),
+                ()-> SmartDashboard.getNumber("KD", KD),
+                ()-> SmartDashboard.getNumber("KF", KF));
+        //something
         pidController.setTolerance(PID_ERROR, Time.milliseconds(500));
         pidController.setOutputLimit(PID_LIMIT);
-        requires(swerve);
+
+        configure().setName("VisionAutoAlign_UsingGyro").save();
+
+        requires(swerve, visionSystem);
     }
 
     @Override
     public void initialize(ActionControl control) {
+        startingAngle = swerve.getHeadingDegrees();
+        this.angle2Target = visionSystem.getXAngleToTarget() + startingAngle  + deviationDistance;
         pidController.reset();
     }
 
@@ -73,7 +71,7 @@ public class VisionAutoAlign_UsingGyro extends ActionBase{
         SmartDashboard.putNumber("starting angle", startingAngle);
         SmartDashboard.putNumber("angle2Target", angle2Target);
 
-        if(!ExtendedMath.constrained(gyroAngle, -ANGLE_ERROR + angle2Target, ANGLE_ERROR + angle2Target)) {
+        if(!ExtendedMath.constrained(gyroAngle, -PID_ERROR + angle2Target, PID_ERROR + angle2Target)) {
 
            // Direction rotateDirection = angle2Target < startingAngle ? Direction.BACKWARD : Direction.FORWARD; //if + then right, if - left
             double rotation = pidController.applyAsDouble(gyroAngle, angle2Target) * swerve.MAX_SPEED;
