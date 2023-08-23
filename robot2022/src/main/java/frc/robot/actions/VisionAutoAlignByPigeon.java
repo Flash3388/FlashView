@@ -19,7 +19,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
     private double currentPosition;
     private PidController pid;
 
-    private static final double KP_G = 1;
+    private static final double KP_G = 0.2;
     private static final double KI_G = 0;
     private static final double KD_G = 0;
     private static final double KF_G = 0;
@@ -30,7 +30,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
         this.currentPosition = swerve.getHeadingDegrees();
-        this.setPoint = this.currentPosition + visionSystem.getXAngleToTarget()   ;
+        this.setPoint = this.currentPosition + visionSystem.getXAngleToTarget()  - 6;
 
 
         this.pid = new PidController(RunningRobot.getControl().getClock(),
@@ -38,6 +38,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
                 ()-> SmartDashboard.getNumber("KI_G", KI_G),
                 ()-> SmartDashboard.getNumber("KD_G", KD_G),
                 ()-> SmartDashboard.getNumber("KF_G", KF_G));
+
         pid.setOutputLimit(-1, 1);
         pid.setTolerance(ERROR, Time.milliseconds(500));
 
@@ -48,6 +49,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
 
 
       //  SmartDashboard.putNumber("SET_POINT", setPoint);
+
 
         configure().setName("VisionAutoAlign_ByPigeon").save();
 

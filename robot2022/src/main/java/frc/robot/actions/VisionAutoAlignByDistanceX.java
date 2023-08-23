@@ -17,18 +17,18 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
     private double distanceX;
     private PidController pid;
 
-    private static final double KP = 1;
+    private static final double KP = 0.2;
     private static final double KI = 0;
     private static final double KD = 0;
     private static final double KF = 0;
 
-    private static final double ERROR = 1;
+    private static final double ERROR = 2;
 
     private static final double SET_POINT = 0;
 
     public VisionAutoAlignByDistanceX(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
-        this.distanceX = visionSystem.getXAngleToTarget();
+        this.distanceX = visionSystem.getXAngleToTarget() - 6;
         this.swerve = swerve;
 
         this.pid = new PidController(RunningRobot.getControl().getClock(),
@@ -44,19 +44,22 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
         SmartDashboard.putNumber("KD_D", KD);
         SmartDashboard.putNumber("KF_D", KF);
 
+        configure().setName("VisionAutoAlign_ByDistanceX").save();
+
+        requires(swerve, visionSystem);
     }
 
     @Override
     public void initialize(ActionControl control) {
         pid.reset();
         distanceX = visionSystem.getXAngleToTarget();
-        SmartDashboard.putNumber("DISTANCE_X", distanceX);
     }
 
     @Override
     public void execute(ActionControl control) {
-        this.distanceX = visionSystem.getXAngleToTarget();
-        double rotation = pid.applyAsDouble(distanceX, SET_POINT);
+        SmartDashboard.putNumber("DISTANCE_X", distanceX);
+        this.distanceX = visionSystem.getXAngleToTarget() - 6;
+        double rotation = pid.applyAsDouble(distanceX, SET_POINT) * swerve.MAX_SPEED;
         swerve.drive(0,0, rotation);
     }
 
