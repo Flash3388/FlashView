@@ -14,59 +14,33 @@ import frc.robot.subsystems.VisionSystem;
 public class VisionAutoAlignByDistanceX extends ActionBase {
     private final VisionSystem visionSystem;
     private Swerve swerve;
-    private double distanceX;
-    private PidController pid;
 
-    private static final double KP = 1;
-    private static final double KI = 0;
-    private static final double KD = 0;
-    private static final double KF = 0;
-
-    private static final double ERROR = 1;
-
-    private static final double SET_POINT = 0;
 
     public VisionAutoAlignByDistanceX(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
-        this.distanceX = visionSystem.getXAngleToTarget();
         this.swerve = swerve;
 
-        this.pid = new PidController(RunningRobot.getControl().getClock(),
-                ()-> SmartDashboard.getNumber("KP_D", KP),
-                ()-> SmartDashboard.getNumber("KI_D", KI),
-                ()-> SmartDashboard.getNumber("KD_D", KD),
-                ()-> SmartDashboard.getNumber("KF_D", KF));
-        pid.setOutputLimit(-1, 1);
-        pid.setTolerance(ERROR, Time.milliseconds(500));
-
-        SmartDashboard.putNumber("KP_D", KP);
-        SmartDashboard.putNumber("KI_D", KI);
-        SmartDashboard.putNumber("KD_D", KD);
-        SmartDashboard.putNumber("KF_D", KF);
-
+        requires(visionSystem, swerve);
     }
 
     @Override
     public void initialize(ActionControl control) {
-        pid.reset();
-        distanceX = visionSystem.getXAngleToTarget();
-        SmartDashboard.putNumber("DISTANCE_X", distanceX);
+
     }
 
     @Override
     public void execute(ActionControl control) {
-        this.distanceX = visionSystem.getXAngleToTarget();
-        double rotation = pid.applyAsDouble(distanceX, SET_POINT);
-        swerve.drive(0,0, rotation);
+        // move until distanceX is as close as possible 0,
+        // indicating the robot is aligned with the target
     }
 
     @Override
     public boolean isFinished() {
-        return ExtendedMath.constrained(distanceX, -ERROR, ERROR);
+        return true; // you need to change that
     }
 
     @Override
     public void end(FinishReason reason) {
-        swerve.stop();
+
     }
 }

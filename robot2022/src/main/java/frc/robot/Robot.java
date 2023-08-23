@@ -43,9 +43,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
-        this.gripper = new Gripper();
         visionSystem = new VisionSystem();
-     //   new Thread(new VisionTask(visionSystem)).start();
         xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
         xbox.getButton(XboxButton.X).whenActive(new VisionAutoAlignByDistanceX(visionSystem, swerve));
 
@@ -68,7 +66,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void teleopPeriodic() {
-
+        /*
         double driveY = -xbox.getAxis(XboxAxis.LeftStickY).getAsDouble()*4.4196 ;
         double driveX = -xbox.getAxis(XboxAxis.LeftStickX).getAsDouble()*4.4196 ;
         double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble()*4.4196;
@@ -81,6 +79,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.swerve.drive(4, 0, 0);
         swerve.print();
        // this.swerve.drive(driveY, 0, 0);
+
+        */
 
     }
 
