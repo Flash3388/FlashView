@@ -24,6 +24,7 @@ public class VisionAutoAlign extends ActionBase {
     private final double KF = 0;
     private final double PID_ERROR = 2;
     private final double PID_LIMIT = 1;
+    private double deviationDistance = -6;
 
 
     public VisionAutoAlign(VisionSystem visionSystem, Swerve swerve) {
@@ -61,7 +62,7 @@ public class VisionAutoAlign extends ActionBase {
 
     @Override
     public void execute(ActionControl actionControl) {
-        double angle2Target = visionSystem.getXAngleToTarget() + visionSystem.isThereATarget(); // degrees
+        double angle2Target = visionSystem.getXAngleToTarget() + deviationDistance; // degrees
         SmartDashboard.putNumber("angle2Target", angle2Target);
         //distanceX = contourCenter.x - imageCenter.x;
         // axis x- to the right, axis y- down
@@ -72,7 +73,7 @@ public class VisionAutoAlign extends ActionBase {
            /* if(Math.abs(rotation) < 0.2)
                 rotation = 0.2 * Math.signum(rotation); //makes a faster rotation
             */
-        swerve.drive(0, 0, -rotation);
+        swerve.drive(0, 0, rotation);
         //swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
 
         // move until distanceX is as close as possible 0,
@@ -83,7 +84,7 @@ public class VisionAutoAlign extends ActionBase {
 
     @Override
     public boolean isFinished() {
-        double angle2Target = visionSystem.getXAngleToTarget() + visionSystem.isThereATarget();
+        double angle2Target = visionSystem.getXAngleToTarget() + deviationDistance;
         if(ExtendedMath.constrained(angle2Target, -PID_ERROR, PID_ERROR)){
         SmartDashboard.putBoolean("got to target", true);
         return true;}
