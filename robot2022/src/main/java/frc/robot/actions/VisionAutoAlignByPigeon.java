@@ -15,32 +15,51 @@ public class VisionAutoAlignByPigeon extends ActionBase {
 
     private VisionSystem visionSystem;
     private Swerve swerve;
+    private double aim;
+    private double rot;
 
 
     public VisionAutoAlignByPigeon(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
+        aim =  swerve.getHeadingDegrees() + visionSystem.getXAngleToTarget();
 
+        if(visionSystem.getXAngleToTarget()<0){
+            rot= -1;
+        }
+        else{
+            rot = 1;
+        }
+        configure().setName("Pigeon").save();
         requires(swerve, visionSystem);
     }
 
     @Override
     public void initialize(ActionControl control) {
+        aim =  swerve.getHeadingDegrees() + visionSystem.getXAngleToTarget();
 
+        if(visionSystem.getXAngleToTarget()>0){
+            rot = -1;
+        }
+        else{
+            rot = 1;
+        }
     }
 
     @Override
     public void execute(ActionControl actionControl) {
+        swerve.drive(0,0,rot);
 
+       // actionControl.finish();
     }
 
     @Override
     public boolean isFinished() {
-       return true; // you need to change that
+        return ExtendedMath.constrained(swerve.getHeadingDegrees(),aim-1,aim+1);
     }
 
     @Override
     public void end(FinishReason reason) {
-
+        swerve.stop();
     }
 }

@@ -18,9 +18,9 @@ public class VisionSystem extends Subsystem {
 
     public double getXAngleToTarget(){
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
-        PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
         if(!pipelineResult.hasTargets())
             return 0;
+        PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
         return bestTarget.getYaw();
     }
 }

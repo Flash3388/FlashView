@@ -19,7 +19,7 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
     public VisionAutoAlignByDistanceX(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
-
+        configure().setName("DistanceX").save();
         requires(visionSystem, swerve);
     }
 
@@ -30,17 +30,25 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
 
     @Override
     public void execute(ActionControl control) {
-        // move until distanceX is as close as possible 0,
-        // indicating the robot is aligned with the target
+        double yaw = visionSystem.getXAngleToTarget();
+        SmartDashboard.putNumber("yaw",yaw);
+        if(!(ExtendedMath.constrained(yaw,-2,2))){
+            swerve.drive(0,0,-1*Math.signum(yaw));
+        }
+        else{
+            control.finish();
+        }
     }
-
+    /*
     @Override
     public boolean isFinished() {
-        return true; // you need to change that
+        return
     }
+
+     */
 
     @Override
     public void end(FinishReason reason) {
-
+        swerve.stop();
     }
 }
