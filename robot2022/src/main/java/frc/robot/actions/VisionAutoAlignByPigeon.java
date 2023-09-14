@@ -65,6 +65,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
 
         SmartDashboard.putNumber("X_ANGLE_TO_TARGET", visionSystem.getXAngleToTarget());
         SmartDashboard.putNumber("START_POINT", swerve.getHeadingDegrees());
+        
 
     }
 
