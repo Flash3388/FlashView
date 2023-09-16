@@ -24,7 +24,7 @@ public class DriveToCone_CameraOnly extends ActionBase {
     private static final double ERROR = 0.03;
 
 
-    DriveToCone_CameraOnly(VisionSystem visionSystem, Swerve swerve){
+    public DriveToCone_CameraOnly(VisionSystem visionSystem, Swerve swerve){
         this.visionSystem = visionSystem;
         this.swerve = swerve;
 
