@@ -1,14 +1,22 @@
 package frc.robot;
 
+import com.castle.time.Clock;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.IFollower;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.flash3388.flashlib.frc.robot.FrcRobotControl;
 import com.flash3388.flashlib.frc.robot.base.iterative.IterativeFrcRobot;
 import com.flash3388.flashlib.hid.XboxAxis;
 import com.flash3388.flashlib.hid.XboxButton;
 import com.flash3388.flashlib.hid.XboxController;
+import com.flash3388.flashlib.robot.RunningRobot;
 import com.flash3388.flashlib.robot.base.DelegatingRobotControl;
+import com.flash3388.flashlib.robot.control.PidController;
 import com.flash3388.flashlib.scheduling.actions.Action;
 import com.flash3388.flashlib.scheduling.actions.ActionGroup;
 import com.flash3388.flashlib.scheduling.actions.Actions;
+import com.flash3388.flashlib.time.Time;
 import com.flash3388.flashview.Program;
 import com.flash3388.flashview.commands.Command;
 import com.flash3388.flashview.commands.CommandType;
@@ -16,11 +24,14 @@ import com.flash3388.flashview.io.CommandTypesLoader;
 import com.flash3388.flashview.io.JsonCommandTypesLoader;
 import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.VisionAutoAlign;
 import frc.robot.actions.VisionAutoAlign_UsingGyro;
 import frc.robot.actions.commands.*;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSystem;
@@ -38,13 +49,17 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     private XboxController xbox;
     private Gripper gripper;
     private VisionSystem visionSystem;
+    private Elevator elevator;
+
 
     public Robot(FrcRobotControl robotControl) {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
+
         visionSystem = new VisionSystem();
+       // elevator = new Elevator(new WPI_TalonSRX(7), new WPI_TalonSRX(8));
        // new Thread(new VisionTask(visionSystem)).start();
 
 
@@ -69,17 +84,19 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void teleopPeriodic() {
-         /*double driveY = xbox.getAxis(XboxAxis.LeftStickY).getAsDouble()*4.4196;
-        double driveX = xbox.getAxis(XboxAxis.LeftStickX).getAsDouble()*4.4196;
+       /*  double upY = xbox.getAxis(XboxAxis.LeftStickY).getAsDouble()*4.4196;
+        double downX = xbox.getAxis(XboxAxis.LeftStickX).getAsDouble()*4.4196;
         double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble()*4.4196;
-        this.swerve.drive(driveY,driveX,rotation); */
+       // this.swerve.drive(driveY,driveX,rotation);
         //xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
+        if(upY<0.1 && upY > -0.1) upY = 0;
+        */
+
+
 
 
        // swerve.print();
-
-
-    }
+ }
 
     @Override
 
@@ -153,6 +170,5 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void robotStop() {
-
     }
 }

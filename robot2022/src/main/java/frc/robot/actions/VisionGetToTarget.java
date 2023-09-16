@@ -1,6 +1,5 @@
 package frc.robot.actions;
 
-import com.flash3388.flashlib.control.Direction;
 import com.flash3388.flashlib.robot.RunningRobot;
 import com.flash3388.flashlib.robot.control.PidController;
 import com.flash3388.flashlib.scheduling.ActionControl;
@@ -8,13 +7,11 @@ import com.flash3388.flashlib.scheduling.FinishReason;
 import com.flash3388.flashlib.scheduling.actions.ActionBase;
 import com.flash3388.flashlib.time.Time;
 import com.jmath.ExtendedMath;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSystem;
 
-public class VisionAutoAlign extends ActionBase {
-
+public class VisionGetToTarget extends ActionBase {
     private final VisionSystem visionSystem;
     private final Swerve swerve;
     private PidController pidController;
@@ -24,10 +21,11 @@ public class VisionAutoAlign extends ActionBase {
     private final double KF = 0;
     private final double PID_ERROR = 2;
     private final double PID_LIMIT = 1;
-    private double deviationDistance = -6;
+    private final double SET_POINT = 5;
 
 
-    public VisionAutoAlign(VisionSystem visionSystem, Swerve swerve) {
+
+    public VisionGetToTarget(VisionSystem visionSystem, Swerve swerve) {
         this.visionSystem = visionSystem;
         this.swerve = swerve;
         SmartDashboard.putNumber("KP", KP);
@@ -50,7 +48,7 @@ public class VisionAutoAlign extends ActionBase {
         pidController.setTolerance(PID_ERROR, Time.milliseconds(500));
         pidController.setOutputLimit(PID_LIMIT);
 
-        configure().setName("VisionAutoAlign").save();
+        configure().setName("VisionGetToTarget").save();
 
         requires(swerve);
     }
@@ -62,34 +60,19 @@ public class VisionAutoAlign extends ActionBase {
 
     @Override
     public void execute(ActionControl actionControl) {
-        double angle2Target = visionSystem.getXAngleToTarget() + deviationDistance; // degrees
-        SmartDashboard.putNumber("angle2Target", angle2Target);
+        double distance = visionSystem.tomFunction();
+        SmartDashboard.putNumber("distance", distance);
         //distanceX = contourCenter.x - imageCenter.x;
-        // axis x- to the right, axis y- down
-        //actionControl.finish;
-        //Direction rotateDirection = angle2Target > 0 ? Direction.FORWARD : Direction.BACKWARD; //if + then right, if - left
-        double rotation = pidController.applyAsDouble(angle2Target, 0) * swerve.MAX_SPEED;
-
-           /* if(Math.abs(rotation) < 0.2)
-                rotation = 0.2 * Math.signum(rotation); //makes a faster rotation
-            */
-        swerve.drive(0, 0, rotation);
-        //swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
-
-        // move until distanceX is as close as possible 0,
-        // indicating the robot is aligned with the target
-
-        //Math.signum(-5); -returns the signal (+1 or -1) according to the variable --> so we can multiply if neccessery
-        // in a different variable. for direction for example.
-
+        double speedX = pidController.applyAsDouble(distance, SET_POINT) * swerve.MAX_SPEED;
+        swerve.drive(0, speedX, 0);
     }
 
     @Override
     public boolean isFinished() {
-        double angle2Target = visionSystem.getXAngleToTarget() + deviationDistance;
-        if(ExtendedMath.constrained(angle2Target, -PID_ERROR, PID_ERROR)){
-        SmartDashboard.putBoolean("got to target", true);
-        return true;}
+        double distance = visionSystem.tomFunction();
+        if(ExtendedMath.constrained(distance, -PID_ERROR, PID_ERROR)){
+            SmartDashboard.putBoolean("got to target", true);
+            return true;}
         else return false;
     }
 
@@ -97,4 +80,9 @@ public class VisionAutoAlign extends ActionBase {
     public void end(FinishReason reason) {
         swerve.stop();
     }
+
+
+
+
+
 }
