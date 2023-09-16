@@ -18,6 +18,8 @@ import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.actions.DriveToCone_CameraAndEncoders;
+import frc.robot.actions.DriveToCone_CameraOnly;
 import frc.robot.actions.VisionAutoAlignByDistanceX;
 import frc.robot.actions.VisionAutoAlignByPigeon;
 import frc.robot.actions.commands.*;
@@ -48,6 +50,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
      //   new Thread(new VisionTask(visionSystem)).start();
         xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
         xbox.getButton(XboxButton.X).whenActive(new VisionAutoAlignByDistanceX(visionSystem, swerve));
+        xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
+        xbox.getButton(XboxButton.B).whenActive(new DriveToCone_CameraAndEncoders(visionSystem, swerve));
 
     }
 
@@ -82,6 +86,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
        // swerve.print();
        // this.swerve.drive(driveY, 0, 0);
 
+        SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
     }
 
     @Override
