@@ -59,8 +59,8 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
     public void execute(ActionControl control) {
         SmartDashboard.putNumber("DISTANCE_X", distanceX);
         this.distanceX = visionSystem.getXAngleToTarget() - 6;
-        double rotation = pid.applyAsDouble(distanceX, SET_POINT) * swerve.MAX_SPEED;
-        swerve.drive(0,0, rotation);
+        double rotation = pid.applyAsDouble(distanceX, SET_POINT) * swerve.MAX_SPEED * 5;
+        swerve.drive(0,0,rotation);
     }
 
     @Override

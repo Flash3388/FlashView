@@ -45,10 +45,11 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
      //   new Thread(new VisionTask(visionSystem)).start();
+
         xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
         xbox.getButton(XboxButton.X).whenActive(new VisionAutoAlignByDistanceX(visionSystem, swerve));
-        xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
-        xbox.getButton(XboxButton.B).whenActive(new DriveToCone_CameraAndEncoders(visionSystem, swerve));
+   //     xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
+     //   xbox.getButton(XboxButton.B).whenActive(new DriveToCone_CameraAndEncoders(visionSystem, swerve));
 
     }
 
@@ -78,15 +79,15 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         driveX = Math.abs(driveX) > 0.2 ? driveX : 0;
         rotation = Math.abs(rotation) > 0.2 ? rotation : 0;
 
-      //  this.swerve.drive(driveY * 4.4196,driveX * 4.4196,rotation * 4.4196);
+       // this.swerve.drive(driveY * 4.4196,driveX * 4.4196,rotation * 4.4196);
         //this.swerve.drive(4, 0, 0);
        // swerve.print();
        // this.swerve.drive(driveY, 0, 0);
 
-        SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
+       // SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
 
-        ActionGroup group = new PlaceCone(gripper).alongWith(new RotateAngle(swerve,40),
-                new MoveDistance(swerve, 10));
+        /*ActionGroup group = new PlaceCone(gripper).alongWith(new RotateAngle(swerve,40),
+                new MoveDistance(swerve, 10));*/
     }
 
     @Override
