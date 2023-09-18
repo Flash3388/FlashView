@@ -18,10 +18,7 @@ import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.actions.DriveToCone_CameraAndEncoders;
-import frc.robot.actions.DriveToCone_CameraOnly;
-import frc.robot.actions.VisionAutoAlignByDistanceX;
-import frc.robot.actions.VisionAutoAlignByPigeon;
+import frc.robot.actions.*;
 import frc.robot.actions.commands.*;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
@@ -87,6 +84,9 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
        // this.swerve.drive(driveY, 0, 0);
 
         SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
+
+        ActionGroup group = new PlaceCone(gripper).alongWith(new RotateAngle(swerve,40),
+                new MoveDistance(swerve, 10));
     }
 
     @Override
