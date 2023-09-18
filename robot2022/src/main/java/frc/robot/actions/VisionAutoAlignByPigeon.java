@@ -17,6 +17,8 @@ public class VisionAutoAlignByPigeon extends ActionBase {
     private Swerve swerve;
     private double aim;
     private double rot;
+    private double dirEven = 1;
+    private double dirOdd = -1;
 
 
     public VisionAutoAlignByPigeon(VisionSystem visionSystem, Swerve swerve) {
@@ -25,10 +27,10 @@ public class VisionAutoAlignByPigeon extends ActionBase {
         aim =  swerve.getHeadingDegrees() + visionSystem.getXAngleToTarget();
 
         if(visionSystem.getXAngleToTarget()<0){
-            rot= -1;
+            rot= dirOdd;
         }
         else{
-            rot = 1;
+            rot = dirEven;
         }
         configure().setName("Pigeon").save();
         requires(swerve, visionSystem);
@@ -39,10 +41,10 @@ public class VisionAutoAlignByPigeon extends ActionBase {
         aim =  swerve.getHeadingDegrees() + visionSystem.getXAngleToTarget();
 
         if(visionSystem.getXAngleToTarget()>0){
-            rot = -1;
+            rot = dirOdd;
         }
         else{
-            rot = 1;
+            rot = dirEven;
         }
     }
 

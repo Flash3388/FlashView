@@ -14,6 +14,9 @@ import frc.robot.subsystems.VisionSystem;
 public class VisionAutoAlignByDistanceX extends ActionBase {
     private final VisionSystem visionSystem;
     private Swerve swerve;
+    private double min = -2;
+    private double max = 2;
+    private double dir = -1;
 
 
     public VisionAutoAlignByDistanceX(VisionSystem visionSystem, Swerve swerve) {
@@ -32,8 +35,8 @@ public class VisionAutoAlignByDistanceX extends ActionBase {
     public void execute(ActionControl control) {
         double yaw = visionSystem.getXAngleToTarget();
         SmartDashboard.putNumber("yaw",yaw);
-        if(!(ExtendedMath.constrained(yaw,-2,2))){
-            swerve.drive(0,0,-1*Math.signum(yaw));
+        if(!(ExtendedMath.constrained(yaw,min,max))){
+            swerve.drive(0,0,dir*Math.signum(yaw));
         }
         else{
             control.finish();
