@@ -53,8 +53,8 @@ public class DriveToCone_CameraOnly extends ActionBase {
 
     @Override
     public boolean isFinished() {
-        double target = visionSystem.getDistanceToTarget() - 0.05; // find the units of the distance
-        return ExtendedMath.constrained(target, -ERROR, ERROR); // find the units of the distance
+        double target = visionSystem.getDistanceToTarget() - 0.03; // find the units of the distance
+        return ExtendedMath.constrained(Math.abs(target), -ERROR, ERROR); // find the units of the distance
     }
 
     @Override

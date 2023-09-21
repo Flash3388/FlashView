@@ -11,15 +11,15 @@ public class VisionSystem extends Subsystem {
 
     private PhotonCamera camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
 
-    private static final double CONE_HEIGHT = 00; //**
-    private static final double CAMERA_HEIGHT = 00;//**
+    private static final double CONE_HEIGHT = 0.17; //**
+    private static final double CAMERA_HEIGHT = 0.485;//**
 
     // you need to find it by creating the equation with known constants:
     // place the cone in a known distance and height. know the camera's height as well.
     // using the photon-vision website, find the pitch of the target and then solve the next equation ->
     // tan(a1+a2) = (h2-h1) / d   you need to find "a1"
     // forward explanation at https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
-    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
+    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-8.4);
 
 
     public VisionSystem() {
@@ -40,7 +40,7 @@ public class VisionSystem extends Subsystem {
     public double getDistanceToTarget(){
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
         if(!pipelineResult.hasTargets())
-            return 0;
+            return 0.03;
 
         PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
 

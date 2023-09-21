@@ -48,8 +48,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
         xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
         xbox.getButton(XboxButton.X).whenActive(new VisionAutoAlignByDistanceX(visionSystem, swerve));
-   //     xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
-     //   xbox.getButton(XboxButton.B).whenActive(new DriveToCone_CameraAndEncoders(visionSystem, swerve));
+        xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
+        xbox.getButton(XboxButton.B).whenActive(new DriveToCone_CameraAndEncoders(visionSystem, swerve));
 
     }
 
@@ -84,7 +84,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
        // swerve.print();
        // this.swerve.drive(driveY, 0, 0);
 
-       // SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
+        SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
 
         /*ActionGroup group = new PlaceCone(gripper).alongWith(new RotateAngle(swerve,40),
                 new MoveDistance(swerve, 10));*/

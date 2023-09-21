@@ -18,7 +18,7 @@ public class DriveToCone_CameraAndEncoders extends ActionBase {
 
     private PidController pid;
 
-    private static final double KP = 0.2;
+    private static final double KP = 1;
     private static final double KI = 0;
     private static final double KD = 0;
     private static final double KF = 0;
@@ -44,15 +44,15 @@ public class DriveToCone_CameraAndEncoders extends ActionBase {
     @Override
     public void initialize(ActionControl control) {
         swerve.resetDistancePassed();
-        this.setPoint = this.visionSystem.getDistanceToTarget() - 0.05;
+        this.setPoint = this.visionSystem.getDistanceToTarget() - 0.03;
     }
 
     @Override
     public void execute(ActionControl control) {
-       /*double speed = pid.applyAsDouble(swerve.getDistancePassedMeters(), setPoint) * swerve.MAX_SPEED;
-        swerve.drive(speed, 0, 0);*/
+       double speed = pid.applyAsDouble(swerve.getDistancePassedMeters(), setPoint) * swerve.MAX_SPEED;
+       // swerve.drive(speed, 0, 0);
 
-        swerve.drive(2, 0, 2);
+        swerve.drive(2, 0, 0);
     }
 
     @Override
