@@ -53,7 +53,7 @@ public class Swerve extends Subsystem {
     }
 
     public double getDistancePassedMeters() {
-        return swerveModules[0].getDistancePassedMeters();
+        return -swerveModules[0].getDistancePassedMeters();
     }
 
     public void stop(){

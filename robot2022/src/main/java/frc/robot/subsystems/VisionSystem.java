@@ -19,8 +19,8 @@ public class VisionSystem extends Subsystem {
     // using the photon-vision website, find the pitch of the target and then solve the next equation ->
     // tan(a1+a2) = (h2-h1) / d   you need to find "a1"
     // forward explanation at https://docs.limelightvision.io/en/latest/cs_estimating_distance.html
-    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-8.4);
-
+    final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(-13.41884);
+    // -8.4
 
     public VisionSystem() {
     }
@@ -40,7 +40,7 @@ public class VisionSystem extends Subsystem {
     public double getDistanceToTarget(){
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
         if(!pipelineResult.hasTargets())
-            return 0.03;
+            return 0.0;
 
         PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
 
@@ -51,5 +51,10 @@ public class VisionSystem extends Subsystem {
                 CONE_HEIGHT,
                 CAMERA_PITCH_RADIANS,
                 Units.degreesToRadians(bestTarget.getPitch()));
+    }
+
+    public boolean hasTargets(){
+        PhotonPipelineResult pipelineResult = camera.getLatestResult();
+        return pipelineResult.hasTargets();
     }
 }
