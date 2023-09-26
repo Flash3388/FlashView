@@ -44,12 +44,12 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
-     //   new Thread(new VisionTask(visionSystem)).start();
 
         xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
         xbox.getButton(XboxButton.X).whenActive(new VisionAutoAlignByDistanceX(visionSystem, swerve));
         xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
-  //      xbox.getButton(XboxButton.B).whenActive(new DriveToCone_CameraAndEncoders(visionSystem, swerve));
+
+        swerve.setDefaultAction(new DriveWithXbox(swerve, xbox));
     }
 
 
@@ -70,19 +70,6 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void teleopPeriodic() {
-
-        double driveY = -xbox.getAxis(XboxAxis.LeftStickY).getAsDouble() ;
-        double driveX = -xbox.getAxis(XboxAxis.LeftStickX).getAsDouble() ;
-        double rotation = -xbox.getAxis(XboxAxis.RightStickX).getAsDouble();
-
-        driveY = Math.abs(driveY) > 0.5 ? driveY : 0;
-        driveX = Math.abs(driveX) > 0.5 ? driveX : 0;
-        rotation = Math.abs(rotation) > 0.5 ? rotation : 0;
-
-       // this.swerve.drive(driveY * 4.4196,driveX * 4.4196,rotation * 4.4196);
-        //this.swerve.drive(4, 0, 0);
-       // swerve.print();
-       // this.swerve.drive(driveY, 0, 0);
 
         SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
         SmartDashboard.putNumber("Distance passed", swerve.getDistancePassedMeters());
