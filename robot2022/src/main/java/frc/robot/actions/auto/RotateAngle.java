@@ -1,4 +1,4 @@
-package frc.robot.actions;
+package frc.robot.actions.auto;
 
 import com.flash3388.flashlib.control.Direction;
 import com.flash3388.flashlib.scheduling.ActionControl;

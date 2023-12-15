@@ -43,6 +43,10 @@ public class VisionSystem extends Subsystem {
             return 0.0;
 
         PhotonTrackedTarget bestTarget = pipelineResult.getBestTarget();
+        bestTarget.getFiducialId();
+        bestTarget.getPoseAmbiguity();
+        bestTarget.getBestCameraToTarget();
+        bestTarget.getAlternateCameraToTarget();
 
         // to know more about the next function press ctrl+b on this function, and you will found out
         // that the equation is similar to the one above

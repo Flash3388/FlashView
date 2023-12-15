@@ -96,6 +96,8 @@ public class Swerve extends Subsystem {
         SmartDashboard.putNumber("FR Heading", swerveModules[1].getHeadingDegrees());
         SmartDashboard.putNumber("RL Heading", swerveModules[2].getHeadingDegrees());
         SmartDashboard.putNumber("RR Heading", swerveModules[3].getHeadingDegrees());
+
+
         SmartDashboard.putNumber("FL Velocity", swerveModules[0].getVelocityRpm());
         SmartDashboard.putNumber("FR Velocity", swerveModules[1].getVelocityRpm());
         SmartDashboard.putNumber("RL Velocity", swerveModules[2].getVelocityRpm());

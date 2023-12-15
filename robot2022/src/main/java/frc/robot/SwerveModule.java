@@ -44,6 +44,7 @@ public class SwerveModule {
         this.pidSteer.setOutputRange(-1,1);
         this.absoluteEncoder = absoluteEncoder;
         double positionAbsEncoder = this.absoluteEncoder.getAbsolutePosition(); //divide angles in the creation of the absolute encoder
+
         steerEncoder.setPosition((positionAbsEncoder - zeroAngle)/360/ GEAR_RATIO_STEER);
 
         pidSteer.setP(STEER_P);

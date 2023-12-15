@@ -2,7 +2,6 @@ package frc.robot;
 
 import com.flash3388.flashlib.frc.robot.FrcRobotControl;
 import com.flash3388.flashlib.frc.robot.base.iterative.IterativeFrcRobot;
-import com.flash3388.flashlib.hid.XboxAxis;
 import com.flash3388.flashlib.hid.XboxButton;
 import com.flash3388.flashlib.hid.XboxController;
 import com.flash3388.flashlib.robot.base.DelegatingRobotControl;
@@ -20,6 +19,9 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.*;
 import frc.robot.actions.commands.*;
+import frc.robot.actions.vision.DriveToCone_CameraOnly;
+import frc.robot.actions.vision.VisionAutoAlignByDistanceX;
+import frc.robot.actions.vision.VisionAutoAlignByPigeon;
 import frc.robot.subsystems.Gripper;
 import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSystem;
@@ -79,7 +81,6 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     }
 
     @Override
-
     public void autonomousInit() {
         try {
             Map<String, ActionCommandType> supportedCommands = new HashMap<>();

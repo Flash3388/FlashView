@@ -1,4 +1,4 @@
-package frc.robot.actions;
+package frc.robot.actions.vision;
 
 import com.flash3388.flashlib.robot.RunningRobot;
 import com.flash3388.flashlib.robot.control.PidController;
