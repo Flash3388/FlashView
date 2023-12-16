@@ -44,7 +44,7 @@ public class Swerve extends Subsystem {
     }
 
     public double getDistancePassedMeters() {
-        return swerveModules[0].getDistancePassedMeters();
+        return -swerveModules[0].getDistancePassedMeters();
     }
 
     public void stop(){
@@ -85,11 +85,38 @@ public class Swerve extends Subsystem {
     }
 
     public void drive(double speedY, double speedX, double rotation){
+      /*  if (rot == 0) {
+            if (!ExtendedMath.constrained(getAngle(), currentAngle - 1, currentAngle + 1)) {
+                rot = ExtendedMath.constrain(pid.applyAsDouble(getAngle(), currentAngle), -0.1, 0.1);
+            }
+        } else {
+            currentAngle = getAngle();
+        }
+
+
+         SwerveModuleState[] swerveModuleStates;
+        if(fieldRelative) {
+            swerveModuleStates = kinematics.toSwerveModuleStates(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(speedX, speedY, rot, Rotation2d.fromDegrees(-getAngle())));
+        } else {
+            swerveModuleStates = kinematics.toSwerveModuleStates(new ChassisSpeeds(speedX, speedY, rot));
+        }
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.MAX_SPEED_METERS_PER_SECOND);
+
+        setDesiredStates(swerveModules, swerveModuleStates);
+        */
+
+
+
+
         //Part V: Kinematics of Swerve
         SwerveModuleState[] swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedY, speedX, rotation)); //convert kinematics to states[]
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED); //limits the speed
         setDesiredStates(swerveModuleStates);
+        SmartDashboard.putNumber("LF:", swerveModuleStates[0].speedMetersPerSecond);
     }
+
 
     public void print() {
         SmartDashboard.putNumber("FL Heading", swerveModules[0].getHeadingDegrees());

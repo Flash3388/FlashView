@@ -15,13 +15,13 @@ public class VisionGetToTarget extends ActionBase {
     private final VisionSystem visionSystem;
     private final Swerve swerve;
     private PidController pidController;
-    private final double KP = 1;
-    private final double KI = 0.03;
+    private final double KP = 3;
+    private final double KI = 0.1;
     private final double KD = 0;
-    private final double KF = 0;
-    private final double PID_ERROR = 2;
+    private final double KF = 0.2;
+    private final double PID_ERROR = 0.03;
     private final double PID_LIMIT = 1;
-    private final double SET_POINT = 5;
+    private final double SET_POINT = 0;
 
 
 
@@ -56,20 +56,28 @@ public class VisionGetToTarget extends ActionBase {
     @Override
     public void initialize(ActionControl control) {
         pidController.reset();
+        swerve.resetDistancePassed();
     }
 
     @Override
     public void execute(ActionControl actionControl) {
         double distance = visionSystem.tomFunction();
+        if(!visionSystem.isThereATarget()){
+            distance = distance - swerve.getDistancePassedMeters();
+        }
+        else{
+            swerve.resetDistancePassed();
+        }
         SmartDashboard.putNumber("distance", distance);
-        //distanceX = contourCenter.x - imageCenter.x;
-        double speedX = pidController.applyAsDouble(distance, SET_POINT) * swerve.MAX_SPEED;
-        swerve.drive(0, speedX, 0);
+        double speedY = pidController.applyAsDouble(distance * 3, SET_POINT) * swerve.MAX_SPEED;
+        SmartDashboard.putNumber("speedY", speedY);
+        SmartDashboard.putNumber("pidVal", pidController.applyAsDouble(distance,SET_POINT));
+        swerve.drive(-speedY, 0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        double distance = visionSystem.tomFunction();
+        double distance = visionSystem.tomFunction() - swerve.getDistancePassedMeters();
         if(ExtendedMath.constrained(distance, -PID_ERROR, PID_ERROR)){
             SmartDashboard.putBoolean("got to target", true);
             return true;}

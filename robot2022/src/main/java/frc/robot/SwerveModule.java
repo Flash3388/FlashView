@@ -22,15 +22,15 @@ public class SwerveModule {
 
     private static final double GEAR_RATIO_DRIVE = 1/6.75;
     private static final double GEAR_RATIO_STEER = 1/12.8;
-    private static final double WHEEL_RADIUS = 0.5005;
+    private static final double WHEEL_RADIUS = 0.0508; //meters
 
-    private CANSparkMax drive; //forwards and backwards
+    private CANSparkMax drive; //forwards and backwards. engine controller
     private CANSparkMax steer; // rotates
     private RelativeEncoder driveEncoder;
-    private RelativeEncoder steerEncoder;
+    private RelativeEncoder steerEncoder; //inside the engine itself
     private SparkMaxPIDController pidDrive;
     private SparkMaxPIDController pidSteer;
-    private CANCoder absoluteEncoder;
+    private CANCoder absoluteEncoder; //absolout encoder
 
 
     public SwerveModule(CANSparkMax drive, CANSparkMax steer, CANCoder absoluteEncoder, double zeroAngle){
@@ -103,6 +103,7 @@ public class SwerveModule {
         double steeringValue = optimizedState.angle.getDegrees()/360/GEAR_RATIO_STEER;
         this.pidSteer.setReference(steeringValue,CANSparkMax.ControlType.kPosition);
     }
+
 
     public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
         double targetAngle = placeInAppropriate0To360Scope(currentAngle.getDegrees(), desiredState.angle.getDegrees());

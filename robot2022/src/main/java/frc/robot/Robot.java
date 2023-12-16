@@ -24,12 +24,15 @@ import com.flash3388.flashview.io.CommandTypesLoader;
 import com.flash3388.flashview.io.JsonCommandTypesLoader;
 import com.flash3388.flashview.io.JsonProgramLoader;
 import com.flash3388.flashview.io.ProgramLoader;
+import com.jmath.ExtendedMath;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.VisionAutoAlign;
 import frc.robot.actions.VisionAutoAlign_UsingGyro;
+import frc.robot.actions.VisionGetToTarget;
 import frc.robot.actions.commands.*;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Gripper;
@@ -37,7 +40,9 @@ import frc.robot.subsystems.Swerve;
 import frc.robot.subsystems.VisionSystem;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -63,8 +68,21 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
        // new Thread(new VisionTask(visionSystem)).start();
 
 
+        xbox.getButton(XboxButton.X).whenActive(new VisionGetToTarget(visionSystem, swerve));
         xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
         xbox.getButton(XboxButton.B).whenActive(new VisionAutoAlign_UsingGyro(visionSystem, swerve));
+//
+//        URL url = getClass().getResource("/log4j2.xml");
+//        File file = new File(url.toURI());
+//        try (FileInputStream stream = new FileInputStream(file)) {
+//            byte[] buffer = new byte[1024];
+//            int read;
+//            while (read = stream.read(buffer)) {
+//
+//            }
+//        }
+
+        //AprilTagFieldLayout layout = AprilTagFieldLayout.loadFromResource("/log4j2.xml");
     }
 
     @Override
@@ -148,24 +166,31 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     @Override
     public void testPeriodic() {
 
-        double driveY = xbox.getAxis(XboxAxis.LeftStickY).getAsDouble();
+      /*  double driveY = xbox.getAxis(XboxAxis.LeftStickY).getAsDouble();
         double driveX = xbox.getAxis(XboxAxis.LeftStickX).getAsDouble();
         double rotation = xbox.getAxis(XboxAxis.RightStickX).getAsDouble();
-        if(driveX< 0.2) driveX =0;
-        if(driveY< 0.2) driveX =0;
-        if(rotation< 0.2) driveX =0;
+        if(Math.abs(driveX)< 0.2) driveX =0;
+        if(Math.abs(driveY)< 0.2) driveY =0;
+        if(Math.abs(rotation)< 0.2) rotation =0;
 
 
+        SmartDashboard.putNumber("y: ", driveY* Swerve.MAX_SPEED);
+        SmartDashboard.putNumber("x: ", driveX* Swerve.MAX_SPEED);
+        SmartDashboard.putNumber("rotation: ", rotation* Swerve.MAX_SPEED);
 
-        this.swerve.drive(driveY * Swerve.MAX_SPEED,driveX * Swerve.MAX_SPEED,rotation * Swerve.MAX_SPEED);
+
+       */
+       // this.swerve.drive(driveY * Swerve.MAX_SPEED,driveX * Swerve.MAX_SPEED,rotation * Swerve.MAX_SPEED);
         //xbox.getButton(XboxButton.A).whenActive(new VisionAutoAlign(visionSystem, swerve));
 
+        visionSystem.aprilTagCheck();
     }
 
     @Override
     public void robotPeriodic() {
         SmartDashboard.getNumber("Distance", 0);
         SmartDashboard.getNumber("Distance", swerve.getDistancePassedMeters());
+        visionSystem.update();
     }
 
     @Override

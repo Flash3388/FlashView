@@ -8,7 +8,7 @@ import com.flash3388.flashlib.time.Time;
 
 public class Elevator extends Subsystem {
 
-    private WPI_TalonSRX engine1;
+    private WPI_TalonSRX engine1; //bakar manua
     private WPI_TalonSRX engine2;
     private PidController pid;
     private final double KP = 0.02;
@@ -26,7 +26,8 @@ public class Elevator extends Subsystem {
     }
 
     public double getHight(double x) {
-        return engine1.getSelectedSensorPosition() / 40962 * 0.04 * Math.PI;
+        // 4096 number of ticks in relative encoder
+        return engine1.getSelectedSensorPosition() / 4096 * 0.04 * Math.PI;
     }
 
     public void up(double x) {
