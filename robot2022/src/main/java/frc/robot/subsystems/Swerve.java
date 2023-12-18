@@ -77,7 +77,8 @@ public class Swerve extends Subsystem {
     public void drive(double speedY, double speedX, double rotation){
         //Part V: Kinematics of Swerve
         SwerveModuleState[] swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedY, speedX, rotation)); //convert kinematics to states[]
-        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED); //limits the speed
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
+
         setDesiredStates(swerveModuleStates);
     }
 
@@ -90,6 +91,7 @@ public class Swerve extends Subsystem {
         };
         setDesiredStates(startingPosition);
     }
+
 
     public void print() {
         SmartDashboard.putNumber("FL Heading", swerveModules[0].getHeadingDegrees());

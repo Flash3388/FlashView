@@ -6,6 +6,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule {
 
@@ -20,7 +21,7 @@ public class SwerveModule {
     private static final double DRIVE_F = 0.0001;
 
     private static final double GEAR_RATIO_DRIVE = 1/6.75;
-    private static final double WHEEL_RADIUS = 0.5005;
+    private static final double WHEEL_RADIUS_M = 0.0508;
 
     private CANSparkMax drive; //forwards and backwards
     private CANSparkMax steer; // rotates
@@ -81,7 +82,7 @@ public class SwerveModule {
     }
 
     public double getDistancePassedMeters() {
-        return driveEncoder.getPosition() * GEAR_RATIO_DRIVE * WHEEL_RADIUS;
+        return driveEncoder.getPosition() * GEAR_RATIO_DRIVE * WHEEL_RADIUS_M;
     }
 
     public double getAbsEncoder() {
@@ -90,10 +91,11 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState){
         SwerveModuleState optimizedState = optimize(desiredState, Rotation2d.fromDegrees(getHeadingDegrees()));
-        double velocityRpm = (optimizedState.speedMetersPerSecond * 60 / (WHEEL_RADIUS*2*Math.PI)) / GEAR_RATIO_DRIVE;
-        this.pidDrive.setReference(velocityRpm,CANSparkMax.ControlType.kVelocity);
+        double velocityRpm = (optimizedState.speedMetersPerSecond * 60 / (WHEEL_RADIUS_M*2*Math.PI)) / GEAR_RATIO_DRIVE;
+        this.pidDrive.setReference(velocityRpm, CANSparkMax.ControlType.kVelocity);
         double steeringValue = optimizedState.angle.getDegrees()/360/ GEAR_RATIO_STEER;
         this.pidSteer.setReference(steeringValue,CANSparkMax.ControlType.kPosition);
+        SmartDashboard.putNumber("PID VEL", velocityRpm);
     }
 
     public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {

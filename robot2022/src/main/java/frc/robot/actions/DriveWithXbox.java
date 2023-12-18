@@ -28,7 +28,7 @@ public class DriveWithXbox extends ActionBase {
         driveX = Math.abs(driveX) > 0.2 ? driveX : 0;
         rotation = Math.abs(rotation) > 0.2 ? rotation : 0;
 
-        this.swerve.drive(driveY * 4.4196,driveX * 4.4196,rotation * 4.4196);
+        this.swerve.drive(driveY * Swerve.MAX_SPEED,driveX * Swerve.MAX_SPEED,rotation * Swerve.MAX_SPEED);
     }
 
     @Override
