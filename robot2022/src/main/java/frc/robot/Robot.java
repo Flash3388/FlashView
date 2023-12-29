@@ -48,20 +48,20 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     public Robot(FrcRobotControl robotControl) {
         super(robotControl);
-       // swerve = SystemFactory.createSwerveSystem();
+        swerve = SystemFactory.createSwerveSystem();
         this.xbox = getHidInterface().newXboxController(RobotMap.XBOX);
         this.gripper = new Gripper();
         visionSystem = new VisionSystem();
 
-      /*  xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
+        xbox.getButton(XboxButton.Y).whenActive(new VisionAutoAlignByPigeon(visionSystem, swerve));
         xbox.getButton(XboxButton.X).whenActive(new VisionAutoAlignByDistanceX(visionSystem, swerve));
         xbox.getButton(XboxButton.A).whenActive(new DriveToCone_CameraOnly(visionSystem, swerve));
-*/
-       // swerve.setDefaultAction(new DriveWithXbox(swerve, xbox));
 
-         module = new SwerveModule(new CANSparkMax(RobotMap.SWERVE_DRIVE_RL, CANSparkMaxLowLevel.MotorType.kBrushless),
+       swerve.setDefaultAction(new DriveWithXbox(swerve, xbox));
+
+        /* module = new SwerveModule(new CANSparkMax(RobotMap.SWERVE_DRIVE_RL, CANSparkMaxLowLevel.MotorType.kBrushless),
                 new CANSparkMax(RobotMap.SWERVE_STEER_RL, CANSparkMaxLowLevel.MotorType.kBrushless),
-                new CANCoder(RobotMap.SWERVE_ABSOLUTE_ENCODER_RL), RobotMap.SWERVE_ABSOLUTE_ENCODER_FL_ZERO_ANGLE);
+                new CANCoder(RobotMap.SWERVE_ABSOLUTE_ENCODER_RL), RobotMap.SWERVE_ABSOLUTE_ENCODER_FL_ZERO_ANGLE);*/
     }
 
 
@@ -83,19 +83,19 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     @Override
     public void teleopPeriodic() {
 
-        module.setDesiredState(new SwerveModuleState(1,  Rotation2d.fromDegrees(90)));
-        SmartDashboard.putNumber("RPM FL", module.getVelocityRpm());
+     /*   module.setDesiredState(new SwerveModuleState(1,  Rotation2d.fromDegrees(90)));
+        SmartDashboard.putNumber("RPM FL", module.getVelocityRpm());*/
 
         /*SmartDashboard.putNumber("Distance To Target", this.visionSystem.getDistanceToTarget());
-        SmartDashboard.putNumber("Distance passed", swerve.getDistancePassedMeters());*/
+        SmartDashboard.putNumber("Distance passed", swerve.getDistancePassedMeters());
 
-        /*ActionGroup group = new PlaceCone(gripper).alongWith(new RotateAngle(swerve,40),
+        ActionGroup group = new PlaceCone(gripper).alongWith(new RotateAngle(swerve,40),
                 new MoveDistance(swerve, 10));*/
     }
 
     @Override
     public void autonomousInit() {
-     /*   try {
+        try {
             Map<String, ActionCommandType> supportedCommands = new HashMap<>();
             supportedCommands.put("move", new MoveCommand(swerve));
             supportedCommands.put("rotate", new RotateCommand(swerve));
@@ -125,7 +125,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
             group.start();
         } catch (IOException e) {
             getLogger().error("Error loading command sequence", e);
-        }*/
+        }
     }
 
     @Override
@@ -141,7 +141,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void testPeriodic() {
-
+        visionSystem.aprilTagCheck();
     }
 
     @Override
