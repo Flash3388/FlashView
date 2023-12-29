@@ -44,7 +44,7 @@ public class RotateAngle extends ActionBase {
         if(Math.abs(rotation) < 0.2)
             rotation = 0.2 * Math.signum(rotation);
 
-        swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED);
+        swerve.drive(0, 0, -rotation * Swerve.MAX_SPEED, false);
 
         SmartDashboard.putBoolean("YES", false);
 

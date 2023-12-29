@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.flash3388.flashlib.robot.RunningRobot;
+import com.flash3388.flashlib.robot.control.PidController;
 import com.flash3388.flashlib.scheduling.Subsystem;
+import com.jmath.ExtendedMath;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -19,10 +22,13 @@ public class Swerve extends Subsystem {
     // front-left, front-right, back-left, back-right
     private final WPI_Pigeon2 gyro;
     private final SwerveDriveKinematics swerveDriveKinematics;
+    private double currentAngle;
+    private PidController pid;
 
     public Swerve(SwerveModule[] swerveModules, WPI_Pigeon2 gyro) {
         this.swerveModules = swerveModules;
         this.gyro = gyro;
+        pid = new PidController(RunningRobot.getControl().getClock(),0.003, 0, 0, 0);
 
         Translation2d fL = new Translation2d(OFFSET, OFFSET);
         Translation2d fR = new Translation2d(OFFSET, -OFFSET);
@@ -32,6 +38,7 @@ public class Swerve extends Subsystem {
         this.gyro.reset();
         swerveDriveKinematics = new SwerveDriveKinematics(fL,fR,bL,bR);
 
+        currentAngle = gyro.getAngle();
     }
 
     public double getHeadingDegrees() {
@@ -74,10 +81,30 @@ public class Swerve extends Subsystem {
         }
     }
 
-    public void drive(double speedY, double speedX, double rotation){
-        //Part V: Kinematics of Swerve
-        SwerveModuleState[] swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedY, speedX, rotation)); //convert kinematics to states[]
+    public void drive(double speedY, double speedX, double rotation, boolean fieldRelative){
+        if (rotation == 0) {
+            if (!ExtendedMath.constrained(getHeadingDegrees(), currentAngle - 1, currentAngle + 1)) {
+                rotation = ExtendedMath.constrain(pid.applyAsDouble(getHeadingDegrees(), currentAngle), -0.1, 0.1);
+            }
+        } else {
+            currentAngle = getHeadingDegrees();
+        }
+
+      /*  SwerveModuleState[] swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedY, speedX, rotation)); //convert kinematics to states[]
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED);
+
+        setDesiredStates(swerveModuleStates);*/ // the original
+
+        SwerveModuleState[] swerveModuleStates;
+        if(fieldRelative) {
+            swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(speedX, speedY, rotation, Rotation2d.fromDegrees(-getHeadingDegrees())));
+        } else {
+            swerveModuleStates = swerveDriveKinematics.toSwerveModuleStates(new ChassisSpeeds(speedX, speedY, rotation));
+        }
+
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates,MAX_SPEED);
 
         setDesiredStates(swerveModuleStates);
     }

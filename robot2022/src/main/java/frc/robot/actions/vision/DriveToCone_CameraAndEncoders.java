@@ -52,7 +52,7 @@ public class DriveToCone_CameraAndEncoders extends ActionBase {
        double speed = pid.applyAsDouble(swerve.getDistancePassedMeters(), setPoint) * swerve.MAX_SPEED;
        // swerve.drive(speed, 0, 0);
 
-        swerve.drive(2, 0, 0);
+        swerve.drive(2, 0, 0, false);
     }
 
     @Override

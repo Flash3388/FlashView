@@ -136,7 +136,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
     @Override
     public void testInit() {
-
+        SmartDashboard.putBoolean("Specific AprilTag?", false);
+        SmartDashboard.putNumber("AprilTag ID:", 0);
     }
 
     @Override

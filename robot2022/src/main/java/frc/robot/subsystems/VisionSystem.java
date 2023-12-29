@@ -60,6 +60,7 @@ public class VisionSystem extends Subsystem {
     public void setPipelineCone() {
         camera.setPipelineIndex(0);
     }
+    public void setPipelineAprilTag(){camera.setPipelineIndex(2);}
 
     public double getXAngleToTarget(){
         PhotonPipelineResult pipelineResult = camera.getLatestResult();
@@ -105,6 +106,31 @@ public class VisionSystem extends Subsystem {
     public EstimatedRobotPose getEstimatedRobotPose(){
         return estimatedRobotPose;
     }
+
+    public boolean isThereSpecificId(double id) {
+        PhotonPipelineResult pipelineResult = camera.getLatestResult();
+       if(pipelineResult.hasTargets()) {
+           for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
+               if (target.getFiducialId() == id)
+                   return true;
+           }
+       }
+        return false;
+    }
+
+    public double getAngleToSpecificAprilTag(double id){
+        if(!isThereSpecificId(id))
+        {
+            return 0;
+        }
+        PhotonPipelineResult pipelineResult = camera.getLatestResult();
+        for (PhotonTrackedTarget target : pipelineResult.getTargets()) {
+            if(target.getFiducialId() == id)
+                return target.getYaw();
+        }
+        return 0;
+    }
+
 
     public void update(){
         Optional<EstimatedRobotPose> optional = estimator.update();

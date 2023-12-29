@@ -78,7 +78,7 @@ public class VisionAutoAlignByPigeon extends ActionBase {
         // move until distanceX is as close as possible 0,
         // indicating the robot is aligned with the target
 
-        swerve.drive(0, 0, -rotation);
+        swerve.drive(0, 0, -rotation, false);
 
        /* if(ExtendedMath.constrained(currentPosition, -3, 3))
             actionControl.finish();*/

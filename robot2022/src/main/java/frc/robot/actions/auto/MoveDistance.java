@@ -30,7 +30,7 @@ public class MoveDistance extends ActionBase {
     @Override
     public void execute(ActionControl actionControl) {
         double speedY = 1 - (swerve.getDistancePassedMeters() / distanceToTravelM);
-        swerve.drive(speedY * Swerve.MAX_SPEED, 0, 0);
+        swerve.drive(speedY * Swerve.MAX_SPEED, 0, 0, false);
 
 
         if (Math.abs(swerve.getDistancePassedMeters()) >= distanceToTravelM) {
