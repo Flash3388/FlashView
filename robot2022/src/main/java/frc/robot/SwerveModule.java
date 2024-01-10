@@ -25,6 +25,7 @@ public class SwerveModule {
 
     private CANSparkMax drive; //forwards and backwards
     private CANSparkMax steer; // rotates
+
     private RelativeEncoder driveEncoder;
     private RelativeEncoder steerEncoder;
     private SparkMaxPIDController pidDrive;

@@ -136,4 +136,8 @@ public class Swerve extends Subsystem {
         SmartDashboard.putNumber("RL abs", swerveModules[2].getAbsEncoder());
         SmartDashboard.putNumber("RR abs", swerveModules[3].getAbsEncoder());
     }
+
+    public  SwerveDriveKinematics getSwerveDriveKinematics(){
+        return swerveDriveKinematics;
+    }
 }

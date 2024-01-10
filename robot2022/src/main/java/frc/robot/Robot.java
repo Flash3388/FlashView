@@ -20,6 +20,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.actions.*;
@@ -46,6 +47,8 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     private VisionSystem visionSystem;
     SwerveModule module;
 
+    private Trajectory trajectory;
+
     public Robot(FrcRobotControl robotControl) {
         super(robotControl);
         swerve = SystemFactory.createSwerveSystem();
@@ -59,6 +62,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
 
        swerve.setDefaultAction(new DriveWithXbox(swerve, xbox));
 
+       
         /* module = new SwerveModule(new CANSparkMax(RobotMap.SWERVE_DRIVE_RL, CANSparkMaxLowLevel.MotorType.kBrushless),
                 new CANSparkMax(RobotMap.SWERVE_STEER_RL, CANSparkMaxLowLevel.MotorType.kBrushless),
                 new CANCoder(RobotMap.SWERVE_ABSOLUTE_ENCODER_RL), RobotMap.SWERVE_ABSOLUTE_ENCODER_FL_ZERO_ANGLE);*/
@@ -155,4 +159,7 @@ public class Robot extends DelegatingRobotControl implements IterativeFrcRobot {
     public void robotStop() {
 
     }
+
+
+
 }
